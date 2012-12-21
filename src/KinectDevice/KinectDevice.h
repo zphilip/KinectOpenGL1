@@ -10,16 +10,45 @@
 #include <XnTypes.h>
 #include <XnV3DVector.h>
 #include "SkeletonPoseDetector.h"
-#include "vmath.h"
+#include <vmmlib/vector.hpp>
+#include <vmmlib/math.hpp>
+
+using namespace vmml;
 
 namespace Kinect
 {
+
+typedef vmml::vector<2, unsigned char> Vector2b;
+typedef vmml::vector<3, unsigned char> Vector3b;
+typedef vmml::vector<4, unsigned char> Vector4b;
+
+typedef vmml::vector<2, short> Vector2s;
+typedef vmml::vector<3, short> Vector3s;
+typedef vmml::vector<4, short> Vector4s;
+
+typedef vmml::vector<2, unsigned short> Vector2w;
+typedef vmml::vector<3, unsigned short> Vector3w;
+typedef vmml::vector<4, unsigned short> Vector4w;    
+    
+typedef vmml::vector<2, int> Vector2i;
+typedef vmml::vector<3, int> Vector3i;
+typedef vmml::vector<4, int> Vector4i;
+
+typedef vmml::vector<2, float> Vector2f;
+typedef vmml::vector<3, float> Vector3f;
+typedef vmml::vector<4, float> Vector4f;
+typedef vmml::vector<4, float> Vector6f;
+
+typedef vmml::vector<2, double> Vec2d;
+typedef vmml::vector<3, double> Vec3d;
+typedef vmml::vector<4, double> Vec4d;
+typedef vmml::vector<5, double> Vec6d;
 
 #define SHOW_DEPTH 1
 #define SHOW_BAR 0
 
 #define XN_CALIBRATION_FILE_NAME "UserCalibration.bin"
-#define CONFIG_XML_PATH "..\\..\\Data\\openni.xml"
+#define CONFIG_XML_PATH "..\\..\\Data\\SamplesConfig.xml"
 
 #define VALIDATE_GENERATOR(type, desc, generator)				\
 {																\

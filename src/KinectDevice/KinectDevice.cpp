@@ -435,9 +435,9 @@ void KinectDevice::Parse3DDepthData(xn::DepthMetaData * depthMetaData)
 			// Convert kinect data to world xyz coordinate
 			unsigned short rawDepth = tmpGrayPixels[offset];
 			Vector3f v = DepthToWorld(x,y,rawDepth);
-			destrow[2] = v.x;
-			destrow[1] = v.y;
-			destrow[0] = v.z;
+			destrow[2] = v.x();
+			destrow[1] = v.y();
+			destrow[0] = v.z();
 			destrow += 3;
 		}
 	}
@@ -453,9 +453,9 @@ Vector3f KinectDevice::DepthToWorld(int x, int y, int depthValue)
 
     Vector3f result;
     const double depth = mGammaMap[depthValue];;
-    result.x = float((x - cx_d) * depth * fx_d);
-    result.y = float((y - cy_d) * depth * fy_d);
-	result.z = float(depth);
+    result.x() = float((x - cx_d) * depth * fx_d);
+    result.y() = float((y - cy_d) * depth * fy_d);
+	result.z() = float(depth);
     return result;
 }
 /*

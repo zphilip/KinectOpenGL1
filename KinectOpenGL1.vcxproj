@@ -51,7 +51,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(OPEN_NI_INCLUDE);$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(XN_NITE_INSTALL_PATH)\Include;$(BOOST_ROOT);$(ogrebullet)\Collisions\include;$(ogrebullet)\Dynamics\include;$(BULLET_ROOT)\src;$(ProjectDir)/src/KinectDevice;$(ProjectDir)/src/KinectHeadTracking;$(ProjectDir)/src/UserTracking;$(ProjectDir)/src;C:\OpenCV2.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPEN_NI_INCLUDE);$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(XN_NITE_INSTALL_PATH)\Include;$(BOOST_ROOT);$(ogrebullet)\Collisions\include;$(ogrebullet)\Dynamics\include;$(BULLET_ROOT)\src;$(ProjectDir)/src/KinectDevice;$(ProjectDir)/src/KinectHeadTracking;$(ProjectDir)/src/UserTracking;$(ProjectDir)/src;C:\OpenCV2.2\include;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
@@ -84,7 +84,6 @@
     <ClCompile Include="src\KinectDevice\KinectDevice.cpp" />
     <ClCompile Include="src\KinectDevice\KinectDeviceManager.cpp" />
     <ClCompile Include="src\KinectDevice\OgreKinect.cpp" />
-    <ClCompile Include="src\KinectDevice\vmath.cpp" />
     <ClCompile Include="src\KinectHeadTracking\KCircle.cpp" />
     <ClCompile Include="src\KinectHeadTracking\KGlutInput.cpp" />
     <ClCompile Include="src\KinectHeadTracking\KGrid.cpp" />
@@ -111,7 +110,6 @@
     <ClInclude Include="src\KinectDevice\KinectDevice.h" />
     <ClInclude Include="src\KinectDevice\KinectDeviceManager.h" />
     <ClInclude Include="src\KinectDevice\OgreKinect.h" />
-    <ClInclude Include="src\KinectDevice\vmath.h" />
     <ClInclude Include="src\KinectHeadTracking\defines.h" />
     <ClInclude Include="src\KinectHeadTracking\KCircle.h" />
     <ClInclude Include="src\KinectHeadTracking\KGlutInput.h" />
@@ -136,6 +134,49 @@
     <ClInclude Include="src\UserTracking\UserSelectionStructures.h" />
     <ClInclude Include="src\UserTracking\UserSelector.h" />
     <ClInclude Include="src\UserTracking\UserTracker.h" />
+    <ClInclude Include="src\vmmlib\aabb.hpp" />
+    <ClInclude Include="src\vmmlib\blas_dgemm.hpp" />
+    <ClInclude Include="src\vmmlib\blas_dot.hpp" />
+    <ClInclude Include="src\vmmlib\blas_includes.hpp" />
+    <ClInclude Include="src\vmmlib\blas_types.hpp" />
+    <ClInclude Include="src\vmmlib\cp3_tensor.hpp" />
+    <ClInclude Include="src\vmmlib\enable_if.hpp" />
+    <ClInclude Include="src\vmmlib\exception.hpp" />
+    <ClInclude Include="src\vmmlib\frustum.hpp" />
+    <ClInclude Include="src\vmmlib\frustum_culler.hpp" />
+    <ClInclude Include="src\vmmlib\jacobi_solver.hpp" />
+    <ClInclude Include="src\vmmlib\lapack.hpp" />
+    <ClInclude Include="src\vmmlib\lapack_gaussian_elimination.hpp" />
+    <ClInclude Include="src\vmmlib\lapack_includes.hpp" />
+    <ClInclude Include="src\vmmlib\lapack_linear_least_squares.hpp" />
+    <ClInclude Include="src\vmmlib\lapack_svd.hpp" />
+    <ClInclude Include="src\vmmlib\lapack_sym_eigs.hpp" />
+    <ClInclude Include="src\vmmlib\lapack_types.hpp" />
+    <ClInclude Include="src\vmmlib\linear_least_squares.hpp" />
+    <ClInclude Include="src\vmmlib\math.hpp" />
+    <ClInclude Include="src\vmmlib\matrix.hpp" />
+    <ClInclude Include="src\vmmlib\matrix_functors.hpp" />
+    <ClInclude Include="src\vmmlib\matrix_pseudoinverse.hpp" />
+    <ClInclude Include="src\vmmlib\matrix_traits.hpp" />
+    <ClInclude Include="src\vmmlib\qr_decomposition.hpp" />
+    <ClInclude Include="src\vmmlib\qtucker3_tensor.hpp" />
+    <ClInclude Include="src\vmmlib\quaternion.hpp" />
+    <ClInclude Include="src\vmmlib\svd.hpp" />
+    <ClInclude Include="src\vmmlib\t3_hooi.hpp" />
+    <ClInclude Include="src\vmmlib\t3_hopm.hpp" />
+    <ClInclude Include="src\vmmlib\t3_hosvd.hpp" />
+    <ClInclude Include="src\vmmlib\t3_ihopm.hpp" />
+    <ClInclude Include="src\vmmlib\tensor3.hpp" />
+    <ClInclude Include="src\vmmlib\tensor3_iterator.hpp" />
+    <ClInclude Include="src\vmmlib\tucker3_exporter.hpp" />
+    <ClInclude Include="src\vmmlib\tucker3_importer.hpp" />
+    <ClInclude Include="src\vmmlib\tucker3_tensor.hpp" />
+    <ClInclude Include="src\vmmlib\tucker3_tensor_sustests.hpp" />
+    <ClInclude Include="src\vmmlib\vector.hpp" />
+    <ClInclude Include="src\vmmlib\vector_traits.hpp" />
+    <ClInclude Include="src\vmmlib\visibility.hpp" />
+    <ClInclude Include="src\vmmlib\vmmlib.hpp" />
+    <ClInclude Include="src\vmmlib\vmmlib_config.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="glut32.dll" />

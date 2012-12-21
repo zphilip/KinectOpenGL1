@@ -16,6 +16,9 @@
     <Filter Include="src\KinectHeadTracking">
       <UniqueIdentifier>{92efc269-24b3-459a-b77e-f906bd12ed85}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\vmmlib">
+      <UniqueIdentifier>{a7372b56-7735-44b0-bbea-e487a4e6a593}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\KinectDevice\KinectDevice.cpp">
@@ -88,9 +91,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\KinectDevice\OgreKinect.cpp">
-      <Filter>src\KinectDevice</Filter>
-    </ClCompile>
-    <ClCompile Include="src\KinectDevice\vmath.cpp">
       <Filter>src\KinectDevice</Filter>
     </ClCompile>
   </ItemGroup>
@@ -176,8 +176,134 @@
     <ClInclude Include="src\KinectDevice\OgreKinect.h">
       <Filter>src\KinectDevice</Filter>
     </ClInclude>
-    <ClInclude Include="src\KinectDevice\vmath.h">
-      <Filter>src\KinectDevice</Filter>
+    <ClInclude Include="src\vmmlib\aabb.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\blas_dgemm.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\blas_dot.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\blas_includes.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\blas_types.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\cp3_tensor.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\enable_if.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\exception.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\frustum.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\frustum_culler.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\jacobi_solver.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\lapack.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\lapack_gaussian_elimination.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\lapack_includes.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\lapack_linear_least_squares.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\lapack_svd.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\lapack_sym_eigs.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\lapack_types.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\linear_least_squares.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\math.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\matrix.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\matrix_functors.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\matrix_pseudoinverse.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\matrix_traits.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\qr_decomposition.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\qtucker3_tensor.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\quaternion.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\svd.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\t3_hooi.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\t3_hopm.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\t3_hosvd.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\t3_ihopm.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\tensor3.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\tensor3_iterator.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\tucker3_exporter.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\tucker3_importer.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\tucker3_tensor.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\tucker3_tensor_sustests.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\vector.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\vector_traits.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\visibility.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\vmmlib.hpp">
+      <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vmmlib\vmmlib_config.hpp">
+      <Filter>src\vmmlib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

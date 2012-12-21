@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kinect_headtracking", "kinect_headtracking\kinect_headtracking.vcxproj", "{C3F4FD83-C6D1-4260-BFC2-E62604A1AC69}"
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KinectOpenGL1", "KinectOpenGL1.vcxproj", "{C3F4FD83-C6D1-4260-BFC2-E62604A1AC69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
