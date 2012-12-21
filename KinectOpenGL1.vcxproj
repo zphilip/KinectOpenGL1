@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C3F4FD83-C6D1-4260-BFC2-E62604A1AC69}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>kinect_headtracking</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>.\bin\$(Configuration)\</OutDir>
+    <IntDir>.\obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(OPEN_NI_INCLUDE);$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(XN_NITE_INSTALL_PATH)\Include;$(BOOST_ROOT);$(ogrebullet)\Collisions\include;$(ogrebullet)\Dynamics\include;$(BULLET_ROOT)\src;$(ProjectDir)/src/KinectDevice;$(ProjectDir)/src/KinectHeadTracking;$(ProjectDir)/src/UserTracking;$(ProjectDir)/src;C:\OpenCV2.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(OPEN_NI_LIB);$(OGRE_HOME)\lib\$(ConfigurationName);$(OGRE_HOME)\lib\$(ConfigurationName)\opt;$(BOOST_ROOT)\lib;$(OPEN_NI_LIB64);$(XN_NITE_INSTALL_PATH)\Lib;$(XN_NITE_INSTALL_PATH)\Lib64;$(ProjectDir)\gl;C:\Program Files %28x86%29\boost\boost_1_44\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OgreMain_d.lib;OIS_d.lib;XnVNITE_1_5_2.lib;openNI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(OPEN_NI_INCLUDE);</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\KinectDevice\KinectDevice.cpp" />
+    <ClCompile Include="src\KinectDevice\KinectDeviceManager.cpp" />
+    <ClCompile Include="src\KinectDevice\OgreKinect.cpp" />
+    <ClCompile Include="src\KinectDevice\vmath.cpp" />
+    <ClCompile Include="src\KinectHeadTracking\KCircle.cpp" />
+    <ClCompile Include="src\KinectHeadTracking\KGlutInput.cpp" />
+    <ClCompile Include="src\KinectHeadTracking\KGrid.cpp" />
+    <ClCompile Include="src\KinectHeadTracking\KHeadTrack.cpp" />
+    <ClCompile Include="src\KinectHeadTracking\KItems.cpp" />
+    <ClCompile Include="src\KinectHeadTracking\kKinect.cpp" />
+    <ClCompile Include="src\KinectHeadTracking\KProgram.cpp" />
+    <ClCompile Include="src\KinectHeadTracking\KVertex.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\UserTracking\ClosestUserSelector.cpp" />
+    <ClCompile Include="src\UserTracking\DefaultTrackingInitializer.cpp" />
+    <ClCompile Include="src\UserTracking\ExitPoseDetector.cpp" />
+    <ClCompile Include="src\UserTracking\opengles.cpp" />
+    <ClCompile Include="src\UserTracking\PoseToggleUserSelector.cpp" />
+    <ClCompile Include="src\UserTracking\PoseUserSelector.cpp" />
+    <ClCompile Include="src\UserTracking\SampleManager.cpp" />
+    <ClCompile Include="src\UserTracking\SceneDrawer.cpp" />
+    <ClCompile Include="src\UserTracking\SinglePoseUserSelector.cpp" />
+    <ClCompile Include="src\UserTracking\TrackingInitializer.cpp" />
+    <ClCompile Include="src\UserTracking\UserSelector.cpp" />
+    <ClCompile Include="src\UserTracking\UserTracker.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\KinectDevice\KinectDevice.h" />
+    <ClInclude Include="src\KinectDevice\KinectDeviceManager.h" />
+    <ClInclude Include="src\KinectDevice\OgreKinect.h" />
+    <ClInclude Include="src\KinectDevice\vmath.h" />
+    <ClInclude Include="src\KinectHeadTracking\defines.h" />
+    <ClInclude Include="src\KinectHeadTracking\KCircle.h" />
+    <ClInclude Include="src\KinectHeadTracking\KGlutInput.h" />
+    <ClInclude Include="src\KinectHeadTracking\KGrid.h" />
+    <ClInclude Include="src\KinectHeadTracking\KHeadTrack.h" />
+    <ClInclude Include="src\KinectHeadTracking\KItems.h" />
+    <ClInclude Include="src\KinectHeadTracking\kKinect.h" />
+    <ClInclude Include="src\KinectHeadTracking\KProgram.h" />
+    <ClInclude Include="src\KinectHeadTracking\KVertex.h" />
+    <ClInclude Include="src\UserTracking\ClosestUserSelector.h" />
+    <ClInclude Include="src\UserTracking\DefaultTrackingInitializer.h" />
+    <ClInclude Include="src\UserTracking\Documentation.h" />
+    <ClInclude Include="src\UserTracking\ExitPoseDetector.h" />
+    <ClInclude Include="src\UserTracking\opengles.h" />
+    <ClInclude Include="src\UserTracking\PoseToggleUserSelector.h" />
+    <ClInclude Include="src\UserTracking\PoseUserSelector.h" />
+    <ClInclude Include="src\UserTracking\SampleManager.h" />
+    <ClInclude Include="src\UserTracking\SceneDrawer.h" />
+    <ClInclude Include="src\UserTracking\SinglePoseUserSelector.h" />
+    <ClInclude Include="src\UserTracking\SkeletonPoseDetector.h" />
+    <ClInclude Include="src\UserTracking\TrackingInitializer.h" />
+    <ClInclude Include="src\UserTracking\UserSelectionStructures.h" />
+    <ClInclude Include="src\UserTracking\UserSelector.h" />
+    <ClInclude Include="src\UserTracking\UserTracker.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="glut32.dll" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

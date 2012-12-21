@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Libs">
+      <UniqueIdentifier>{39c6e602-cc98-459d-a275-e1771b077377}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{6f9dec99-7b6d-4248-a1eb-d30e749cbae0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UserTracking">
+      <UniqueIdentifier>{9d0893d4-86df-4e7c-89b8-4a6cb956e87f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\KinectDevice">
+      <UniqueIdentifier>{10b74f43-7083-431f-a565-f409c0a56ff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\KinectHeadTracking">
+      <UniqueIdentifier>{92efc269-24b3-459a-b77e-f906bd12ed85}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\KinectDevice\KinectDevice.cpp">
+      <Filter>src\KinectDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectDevice\KinectDeviceManager.cpp">
+      <Filter>src\KinectDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\ClosestUserSelector.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\DefaultTrackingInitializer.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\ExitPoseDetector.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\opengles.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\PoseToggleUserSelector.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\PoseUserSelector.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\SampleManager.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\SceneDrawer.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\SinglePoseUserSelector.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\TrackingInitializer.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\UserSelector.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserTracking\UserTracker.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectHeadTracking\KCircle.cpp">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectHeadTracking\KGlutInput.cpp">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectHeadTracking\KGrid.cpp">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectHeadTracking\KHeadTrack.cpp">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectHeadTracking\KItems.cpp">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectHeadTracking\kKinect.cpp">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectHeadTracking\KProgram.cpp">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectHeadTracking\KVertex.cpp">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectDevice\OgreKinect.cpp">
+      <Filter>src\KinectDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectDevice\vmath.cpp">
+      <Filter>src\KinectDevice</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\KinectDevice\KinectDevice.h">
+      <Filter>src\KinectDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectDevice\KinectDeviceManager.h">
+      <Filter>src\KinectDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\ClosestUserSelector.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\DefaultTrackingInitializer.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\Documentation.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\ExitPoseDetector.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\opengles.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\PoseToggleUserSelector.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\PoseUserSelector.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\SampleManager.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\SceneDrawer.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\SinglePoseUserSelector.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\TrackingInitializer.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\UserSelectionStructures.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\UserSelector.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\UserTracker.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectHeadTracking\defines.h">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectHeadTracking\KCircle.h">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectHeadTracking\KGlutInput.h">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectHeadTracking\KGrid.h">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectHeadTracking\KHeadTrack.h">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectHeadTracking\KItems.h">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectHeadTracking\kKinect.h">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectHeadTracking\KProgram.h">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectHeadTracking\KVertex.h">
+      <Filter>src\KinectHeadTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\SkeletonPoseDetector.h">
+      <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectDevice\OgreKinect.h">
+      <Filter>src\KinectDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectDevice\vmath.h">
+      <Filter>src\KinectDevice</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="glut32.dll">
+      <Filter>Libs</Filter>
+    </None>
+  </ItemGroup>
+</Project>
