@@ -8,7 +8,7 @@ float KProgram::x2=0.9f;
 float KProgram::y2=0.57f;
 float KProgram::z2=2.55f;
 
-KProgram::KProgram(SampleManager* pSampleManage)
+KProgram::KProgram(KinectAppManager* pSampleManage)
 {
 	m_pSampleManage = pSampleManage;
 }

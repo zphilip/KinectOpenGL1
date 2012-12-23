@@ -46,7 +46,9 @@
 		
 		<!-- Create an image node. If it fails, continue anyway. -->
 		<Node type="Image" stopOnError="false" />
-
+		<Node type="User" />
+		<Node type="Gesture"/>
+		<Node type="Hands"/>
 		<!-- Uncomment nodes from here if you need them.
 		<Node type="Audio" />
 		<Node type="User" />

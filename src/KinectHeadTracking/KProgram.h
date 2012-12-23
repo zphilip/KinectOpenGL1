@@ -5,19 +5,19 @@
 #include "KHeadTrack.h"
 #include "KGlutInput.h"
 #include "kKinect.h"
-#include "SampleManager.h"
+#include "KinectAppManager.h"
 
 
 class KProgram
 {
 	// This to be the main-helper-class and thus it should only be static, so no constructor
 private:
-	SampleManager* m_pSampleManage;
+	KinectAppManager* m_pSampleManage;
 	//get head position from samplemanager
 	KVertex getHeadPosition(void);
 
 public:
-	KProgram(SampleManager* pSampleManage);
+	KProgram(KinectAppManager* pSampleManage);
 	~KProgram(void);
 	
 	// Saves the window-handle of the main window

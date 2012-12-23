@@ -28,10 +28,11 @@
 #include "UserTracker.h"
 #include "TrackingInitializer.h"
 #include "UserSelector.h"
+#include "KinectDeviceManager.h"
 
 /// @brief abstract class to create and manage the sample. 
 /// @ingroup UserSelectionSampleManagers
-class SampleManager
+class KinectAppManager
 {
 public:
     /// @brief method to start running the sample.
@@ -39,17 +40,17 @@ public:
     /// @param argc The number of command line arguments (same as @ref main()).
     /// @param argv The command line arguments array (same as @ref main()).
     /// @return the success code.
-    virtual XnStatus StartSample(int argc, char **argv);
+    virtual XnStatus StartKinectApp(int argc, char **argv);
     /// @brief Cleanup method.
     /// 
     /// This method is called by the graphics when exiting and should clean everything up.
     virtual void Cleanup();
     /// @brief destructor
-    virtual ~SampleManager();
+    virtual ~KinectAppManager();
 	friend class KProgram;
 protected:
     /// @brief constructor
-    SampleManager();
+    KinectAppManager();
     /// @brief Method to choose the UserSelector and TrackingInitializer
     /// 
     /// This is the method to overwrite when inheriting. It is responsible for filling up
@@ -59,12 +60,13 @@ protected:
     UserTracker *m_pUserTracker; ///< @brief The user tracker used when running
     TrackingInitializer *m_pTrackingInitializer; ///< @brief The tracking initializer to use
     UserSelector *m_pUserSelector; ///< @brief The user selector to use.
+	KinectDeviceManager m_KinectDeviceManager; 
 };
 
 /// @brief an abstract SampleManager implementation which does calibration pose user selection if the
 /// skeleton requires a calibration pose and uses the default tracking initializer.
 /// @ingroup UserSelectionSampleManagers
-class DefaultInitializerWithCalibPose : public SampleManager
+class DefaultInitializerWithCalibPose : public KinectAppManager
 {
 protected:
     /// @brief Constructor

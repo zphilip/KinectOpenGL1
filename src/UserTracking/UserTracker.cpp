@@ -55,7 +55,7 @@ XnFloat UserTracker::s_Colors[][3] =
 };
 XnUInt32 UserTracker::s_nColors = 10;
 
-UserTracker::UserTracker(int argc, char **argv, XnUInt64 timeSpanForExitPose) : m_bValid(FALSE), 
+UserTracker::UserTracker(int argc, char **argv, KinectDevice *kinect, XnUInt64 timeSpanForExitPose) : m_bValid(FALSE), 
                                                                                 m_timeSpanForExitPose(timeSpanForExitPose),
                                                                                 m_pExitPoseDetector(NULL)
 {
@@ -81,10 +81,11 @@ UserTracker::UserTracker(int argc, char **argv, XnUInt64 timeSpanForExitPose) : 
         }
     }
 	*/
-	nRetVal = m_Kinect.initPrimeSensor();
-	m_DepthGenerator = m_Kinect.getDepthGenerator();
-	m_UserGenerator = m_Kinect.getUserGenerator();
-	m_ImageGenerator = m_Kinect.getImageGenerator();
+	m_Kinect = kinect; 
+	nRetVal = m_Kinect->initPrimeSensor();
+	m_DepthGenerator = m_Kinect->getDepthGenerator();
+	m_UserGenerator = m_Kinect->getUserGenerator();
+	m_ImageGenerator = m_Kinect->getImageGenerator();
 
     m_pExitPoseDetector=XN_NEW(ExitPoseDetector,*m_UserGenerator);
     if(!(m_pExitPoseDetector->Valid()))
@@ -350,7 +351,6 @@ void UserTracker::CleanUp()
         XN_DELETE(m_pExitPoseDetector);
         m_pExitPoseDetector=NULL;
     }
-	m_Kinect.shutdown();
     m_bValid=FALSE;
 }
 
@@ -358,7 +358,7 @@ void UserTracker::CleanUp()
 void UserTracker::UpdateFrame()
 {
     // Read next available data
-	m_Kinect.Update();
+	m_Kinect->Update();
     m_pUserSelector->UpdateFrame();
     // now we need to update the users for tracking the exit pose.
 }

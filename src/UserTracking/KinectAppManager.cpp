@@ -23,7 +23,7 @@
 //---------------------------------------------------------------------------
 // Includes
 //---------------------------------------------------------------------------
-#include "SampleManager.h"
+#include "KinectAppManager.h"
 #include "SceneDrawer.h"
 #include "DefaultTrackingInitializer.h"
 #include "SinglePoseUserSelector.h"
@@ -37,20 +37,26 @@
                             return returnCode; 
 
 
-SampleManager::SampleManager() : m_pUserTracker(NULL), 
+KinectAppManager::KinectAppManager() : m_pUserTracker(NULL), 
                                    m_pTrackingInitializer(NULL), 
-                                   m_pUserSelector(NULL)
+                                   m_pUserSelector(NULL),
+								   m_KinectDeviceManager()
 {
 
 }
 
 
-XnStatus SampleManager::StartSample(int argc, char **argv)
+XnStatus KinectAppManager::StartKinectApp(int argc, char **argv)
 {
-    // first we create a UserTracker object. This initializes all the openNI portions...
-    m_pUserTracker = XN_NEW(UserTracker,argc,argv,3000000); 
-
-    // make sure the initialization was a success
+    //init the kinect
+	KinectDevice* mKinectDevice;
+	//init the kinect device
+	mKinectDevice = m_KinectDeviceManager[0];
+	if (mKinectDevice->initPrimeSensor() != XN_STATUS_OK)
+		return false;
+	// first we create a UserTracker object. This initializes all the openNI portions...
+    m_pUserTracker = XN_NEW(UserTracker,argc,argv,mKinectDevice,3000000); 
+	// make sure the initialization was a success
     if(m_pUserTracker->Valid()==FALSE) 
     {
         RETURN_WITH_CLEANUP(XN_STATUS_ERROR, "User tracker invalid"); 
@@ -83,7 +89,7 @@ XnStatus SampleManager::StartSample(int argc, char **argv)
     return XN_STATUS_OK; 
 }
 
-void SampleManager::Cleanup()
+void KinectAppManager::Cleanup()
 {
     // delete everything in an ordered manner. Make sure pointers are null afterwards.
     if(m_pUserSelector!=NULL)
@@ -101,8 +107,9 @@ void SampleManager::Cleanup()
         XN_DELETE(m_pUserTracker);
         m_pUserTracker=NULL;
     }
+	XN_DELETE(&m_KinectDeviceManager);
 }
-SampleManager::~SampleManager()
+KinectAppManager::~KinectAppManager()
 {
     Cleanup();
 }

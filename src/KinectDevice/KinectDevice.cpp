@@ -76,9 +76,12 @@ XnStatus KinectDevice::initPrimeSensor()
 		// Init OpenNI from XML
 		XnStatus rc = XN_STATUS_OK;
 		xn::NodeInfoList nodes;
-
         xn::EnumerationErrors errors;
-        rc = m_Context.InitFromXmlFile(CONFIG_XML_PATH, m_scriptNode, &errors);
+
+		if(mIsWorking)
+			return rc;
+        
+		rc = m_Context.InitFromXmlFile(CONFIG_XML_PATH, m_scriptNode, &errors);
         if (rc == XN_STATUS_NO_NODE_PRESENT)
         {
             XnChar strError[1024];
@@ -120,13 +123,6 @@ XnStatus KinectDevice::initPrimeSensor()
 			m_DepthGenerator = mockDepth;
 		}
 
-		rc = m_Context.FindExistingNode(XN_NODE_TYPE_USER, m_UserGenerator);
-		if (rc != XN_STATUS_OK)
-		{
-			rc = m_UserGenerator.Create(m_Context);
-			CHECK_RC(rc, "Find user generator");
-		}
-
 		rc = m_Context.FindExistingNode(XN_NODE_TYPE_IMAGE, m_ImageGenerator);
 		if (rc != XN_STATUS_OK)
 		{
@@ -134,7 +130,14 @@ XnStatus KinectDevice::initPrimeSensor()
 			CHECK_RC(rc, "Find image generator");
 		}
 
-		if (!m_UserGenerator.IsCapabilitySupported(XN_CAPABILITY_SKELETON))
+		rc = m_Context.FindExistingNode(XN_NODE_TYPE_USER, m_UserGenerator);
+		if (rc != XN_STATUS_OK && SHOW_USER)
+		{
+			rc = m_UserGenerator.Create(m_Context);
+			CHECK_RC(rc, "Find user generator");
+		}
+
+		if (!m_UserGenerator.IsCapabilitySupported(XN_CAPABILITY_SKELETON)&&SHOW_SKELETON)
 		{
 			printf("Supplied user generator doesn't support skeleton\n");
 			return XN_STATUS_ERROR;
@@ -163,7 +166,7 @@ XnStatus KinectDevice::initPrimeSensor()
 #if SHOW_DEPTH
 		m_DepthGenerator.GetMirrorCap().SetMirror(m_front);
 #endif
-
+		m_ImageGenerator.GetMirrorCap().SetMirror(m_front);
 		// Make sure OpenNI nodes start generating
 		rc = m_Context.StartGeneratingAll();
 		CHECK_RC(rc, "Kinect StartGenerating Context to Ogre");

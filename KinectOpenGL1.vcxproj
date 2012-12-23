@@ -99,7 +99,7 @@
     <ClCompile Include="src\UserTracking\opengles.cpp" />
     <ClCompile Include="src\UserTracking\PoseToggleUserSelector.cpp" />
     <ClCompile Include="src\UserTracking\PoseUserSelector.cpp" />
-    <ClCompile Include="src\UserTracking\SampleManager.cpp" />
+    <ClCompile Include="src\UserTracking\KinectAppManager.cpp" />
     <ClCompile Include="src\UserTracking\SceneDrawer.cpp" />
     <ClCompile Include="src\UserTracking\SinglePoseUserSelector.cpp" />
     <ClCompile Include="src\UserTracking\TrackingInitializer.cpp" />
@@ -126,7 +126,7 @@
     <ClInclude Include="src\UserTracking\opengles.h" />
     <ClInclude Include="src\UserTracking\PoseToggleUserSelector.h" />
     <ClInclude Include="src\UserTracking\PoseUserSelector.h" />
-    <ClInclude Include="src\UserTracking\SampleManager.h" />
+    <ClInclude Include="src\UserTracking\KinectAppManager.h" />
     <ClInclude Include="src\UserTracking\SceneDrawer.h" />
     <ClInclude Include="src\UserTracking\SinglePoseUserSelector.h" />
     <ClInclude Include="src\UserTracking\SkeletonPoseDetector.h" />

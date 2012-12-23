@@ -38,7 +38,7 @@
 // Code
 //---------------------------------------------------------------------------
 
-
+using namespace Kinect;
 
 /// @brief Class to provide the OpenNI portions of the user selection sample
 /// 
@@ -55,8 +55,7 @@ public:
     /// @param argc The number of command line arguments (same as @ref main())
     /// @param argv The command line arguments (same as @ref main())
     /// @param timeSpanForExitPose the number of microseconds exit pose must be 
-    UserTracker(int argc, char **argv, XnUInt64 timeSpanForExitPose);
-
+    UserTracker(int argc, char **argv, KinectDevice *kinect, XnUInt64 timeSpanForExitPose);
 
     /// @brief Destructor
     virtual ~UserTracker();
@@ -194,7 +193,7 @@ private:
 
     XnBool m_bRecord; ///< @brief If we are recording or not.
     XnBool m_bValid; ///< @brief Holds true if we have a valid value. This only happens after initialization!
-	Kinect::KinectDevice m_Kinect;
+	Kinect::KinectDevice *m_Kinect;
 
 };
 

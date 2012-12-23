@@ -46,6 +46,11 @@ typedef vmml::vector<5, double> Vec6d;
 
 #define SHOW_DEPTH 1
 #define SHOW_BAR 0
+#define SHOW_USER 1
+#define SHOW_SKELETON 0
+#define SHOW_IMAGE 1
+#define	SHOW_GESTURE 0
+#define SHOW_HAND 0
 
 #define XN_CALIBRATION_FILE_NAME "UserCalibration.bin"
 #define CONFIG_XML_PATH "..\\..\\Data\\SamplesConfig.xml"

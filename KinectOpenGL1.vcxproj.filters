@@ -45,9 +45,6 @@
     <ClCompile Include="src\UserTracking\PoseUserSelector.cpp">
       <Filter>src\UserTracking</Filter>
     </ClCompile>
-    <ClCompile Include="src\UserTracking\SampleManager.cpp">
-      <Filter>src\UserTracking</Filter>
-    </ClCompile>
     <ClCompile Include="src\UserTracking\SceneDrawer.cpp">
       <Filter>src\UserTracking</Filter>
     </ClCompile>
@@ -93,6 +90,9 @@
     <ClCompile Include="src\KinectDevice\OgreKinect.cpp">
       <Filter>src\KinectDevice</Filter>
     </ClCompile>
+    <ClCompile Include="src\UserTracking\KinectAppManager.cpp">
+      <Filter>src\UserTracking</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\KinectDevice\KinectDevice.h">
@@ -120,9 +120,6 @@
       <Filter>src\UserTracking</Filter>
     </ClInclude>
     <ClInclude Include="src\UserTracking\PoseUserSelector.h">
-      <Filter>src\UserTracking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\UserTracking\SampleManager.h">
       <Filter>src\UserTracking</Filter>
     </ClInclude>
     <ClInclude Include="src\UserTracking\SceneDrawer.h">
@@ -304,6 +301,9 @@
     </ClInclude>
     <ClInclude Include="src\vmmlib\vmmlib_config.hpp">
       <Filter>src\vmmlib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserTracking\KinectAppManager.h">
+      <Filter>src\UserTracking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

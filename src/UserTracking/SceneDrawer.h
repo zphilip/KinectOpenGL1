@@ -23,7 +23,7 @@
 #define XNV_SCENE_DRAWER_H_
 
 #include "UserTracker.h"
-#include "SampleManager.h"
+#include "KinectAppManager.h"
 
 #ifndef USE_GLES
 #if (XN_PLATFORM == XN_PLATFORM_MACOSX)
@@ -34,9 +34,6 @@
 #else
 #include "opengles.h"
 #endif
-
-
-
 
 /// @brief Class to draw the scene for the sample
 /// 
@@ -62,11 +59,13 @@ public:
     /// @param pSample The sample manager to use
     /// @param bShowLowConfidence When this is true, low confidence limbs will be shown as dotted or 
     ///        dashed lines instead of disappearing
-    void DrawScene(UserTracker *pUserTrackerObj,int argc, char **argv,SampleManager *pSample, XnBool bShowLowConfidence);
+    void DrawScene(UserTracker *pUserTrackerObj,int argc, char **argv,KinectAppManager *pSample, XnBool bShowLowConfidence);
 
     /// @brief gets the singleton instance.
     static SceneDrawer *GetInstance();
 	static int m_windowHandle;
+	static int sub_windowHandle1;
+	static int sub_windowHandle2;
 private:
     static SceneDrawer *m_pSingleton; ///< The singleton instance
     /// Private constructor just to make sure we can't create an object. Only GetInstance creates a 
@@ -102,8 +101,14 @@ private:
     /// the various internal methods to draw the texture, labels and skeleton.
     /// @note this is a callback for glutMainLoop if using glut (rather than GLES) and called all 
     /// the time in the while loop if we are using GLES.
-    static void glutDisplay (void);
-
+    static void subwindow2_display (void);
+	static void subwindow1_display (void);
+	static void main_display (void);
+	static void main_reshape (int width, int height);
+	static void subwindow1_reshape (int width, int height);
+	static void subwindow2_reshape (int width, int height);
+	static void subwindow1_mouse_motion(int x, int y) ;
+	static void subwindow1_mouse(int button, int state, int x, int y);
 #ifndef USE_GLES
     /// @brief An internal callback which is called from inside DrawScene main loop for background 
     /// frames.
@@ -151,7 +156,7 @@ private:
     /// @name TextureInitializationMembers
     /// members used for initializing the texture
     /// @{
-	    GLuint depthTexID;
+	GLuint depthTexID;
     unsigned char* pDepthTexBuf;
     int texWidth, texHeight;
     GLfloat texcoords[8];
@@ -183,8 +188,10 @@ private:
     ///        dashed lines instead of disappearing
     XnBool m_bShowLowConfidence; 
 
-    SampleManager *m_pSample;
+    KinectAppManager *m_KinectApp;
     /// @}
+	GLubyte aDepthMap[640*480];
+	GLuint texture_rgb, texture_depth;
 };
 
 #endif // XNV_SCENE_DRAWER_H_
