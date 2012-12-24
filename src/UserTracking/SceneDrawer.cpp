@@ -132,6 +132,11 @@ SceneDrawer::SceneDrawer()
     g_bPrintState = TRUE;
     g_bPause=FALSE;
 
+	//opengl texture
+	//g_texDepth = 
+	//g_texImage = XnTextureMap{0};
+	//g_texBackground = XnTextureMap{0};
+
     // buffer initialization
     pLimbsPosArr=XN_NEW_ARR(XnPoint3D,(MAX_LIMBS*2));
     pConfidenceArr=XN_NEW_ARR(XnFloat,MAX_LIMBS);
@@ -350,6 +355,11 @@ void SceneDrawer::InitTexture()
     texcoords[1] = (float)g_nYRes/texHeight;
     texcoords[2] = (float)g_nXRes/texWidth;
     texcoords[7] = (float)g_nYRes/texHeight;
+
+	KinectDevice *m_Kinect = m_KinectApp->GetKinectDevice(0);
+
+	TextureMapInit(&g_texDepth, m_Kinect->getDepthBuffer(), 640, 480, 4, 640, 480);
+	TextureMapInit(&g_texImage, m_Kinect->getColorBuffer(), 640, 480, 4, 640, 480);
 }
 
 void SceneDrawer::subwindow2_display (void)
@@ -453,6 +463,147 @@ void SceneDrawer::subwindow1_mouse(int button, int state, int x, int y) {
 		}
 	}
 }
+
+void SceneDrawer::drawDebugFrame()
+{
+	IntRect DepthLocation;
+	IntRect ImageLocation;
+    SceneDrawer *singleton=GetInstance();
+    if(singleton->g_bPause==FALSE)
+        singleton->m_pUserTrackerObj->UpdateFrame();
+
+	// calculate locations
+	DepthLocation.uBottom = 0;
+	DepthLocation.uTop = subwindow2_h - 1;
+	DepthLocation.uLeft = 0;
+	DepthLocation.uRight = subwindow2_w - 1;
+
+	ImageLocation.uBottom = 0;
+	ImageLocation.uTop = subwindow2_h - 1;
+	ImageLocation.uLeft = 0;
+	ImageLocation.uRight = subwindow2_w - 1;
+
+	DepthLocation.uTop = subwindow2_h / 2 - 1;
+	DepthLocation.uRight = subwindow2_w / 2 - 1;
+	ImageLocation.uTop = subwindow2_h / 2 - 1;
+	ImageLocation.uLeft = subwindow2_w / 2;
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	// Setup the opengl env for fixed location view
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0,subwindow2_w,subwindow2_h,0,-1.0,1.0);
+	glDisable(GL_DEPTH_TEST); 
+
+	singleton->TextureMapUpdate(&singleton->g_texImage);
+	singleton->TextureMapDraw(&singleton->g_texImage, &ImageLocation);
+	singleton->TextureMapUpdate(&singleton->g_texDepth);
+	singleton->TextureMapDraw(&singleton->g_texDepth, &DepthLocation);
+
+	glutSwapBuffers();
+}
+
+void SceneDrawer::TextureMapInit(XnTextureMap* pTex, unsigned char* pBuffer, int nSizeX, int nSizeY, unsigned int nBytesPerPixel, int nCurX, int nCurY)
+{
+	// check if something changed
+	if (pTex->bInitialized && pTex->OrigSize.X == nSizeX && pTex->OrigSize.Y == nSizeY)
+	{
+		if (pTex->CurSize.X != nCurX || pTex->CurSize.Y != nCurY)
+		{
+			// update
+			pTex->CurSize.X = nCurX;
+			pTex->CurSize.Y = nCurY;
+			return;
+		}
+	}
+
+	// free memory if it was allocated
+	if (pTex->pMap != NULL)
+		delete pTex->pMap;
+
+	// update it all
+	pTex->OrigSize.X = nSizeX;
+	pTex->OrigSize.Y = nSizeY;
+	pTex->Size.X = GetPowerOfTwo(nSizeX);
+	pTex->Size.Y = GetPowerOfTwo(nSizeY);
+	pTex->nBytesPerPixel = nBytesPerPixel;
+	pTex->CurSize.X = nCurX;
+	pTex->CurSize.Y = nCurY;
+	pTex->pMap = pBuffer;
+	
+	if (!pTex->bInitialized)
+	{
+		glGenTextures(1, &pTex->nID);
+		glBindTexture(GL_TEXTURE_2D, pTex->nID);
+
+		switch (pTex->nBytesPerPixel)
+		{
+		case 3:
+			pTex->nFormat = GL_RGB;
+			break;
+		case 4:
+			pTex->nFormat = GL_RGBA;
+			break;
+		}
+
+		//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		pTex->bInitialized = TRUE;
+	}
+}
+
+void SceneDrawer::TextureMapUpdate(XnTextureMap* pTex)
+{
+	// set current texture object
+	glBindTexture(GL_TEXTURE_2D, pTex->nID);
+
+	// set the current image to the texture
+	glTexImage2D(GL_TEXTURE_2D, 0, pTex->nFormat, pTex->Size.X, pTex->Size.Y, 0, pTex->nFormat, GL_UNSIGNED_BYTE, pTex->pMap);
+}
+
+
+void SceneDrawer::TextureMapDraw(XnTextureMap* pTex, IntRect* pLocation)
+{
+	// set current texture object
+	glBindTexture(GL_TEXTURE_2D, pTex->nID);
+
+	// turn on texture mapping
+	glEnable(GL_TEXTURE_2D);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// set drawing mode to rectangles
+	glBegin(GL_QUADS);
+
+	// set the color of the polygon
+	glColor4f(1, 1, 1, 1);
+
+	// upper left
+	glTexCoord2f(0, 0);
+	glVertex2f(pLocation->uLeft, pLocation->uBottom);
+	// upper right
+	glTexCoord2f((float)pTex->OrigSize.X/(float)pTex->Size.X, 0);
+	glVertex2f(pLocation->uRight, pLocation->uBottom);
+	// bottom right
+	glTexCoord2f((float)pTex->OrigSize.X/(float)pTex->Size.X, (float)pTex->OrigSize.Y/(float)pTex->Size.Y);
+	glVertex2f(pLocation->uRight, pLocation->uTop);
+	// bottom left
+	glTexCoord2f(0, (float)pTex->OrigSize.Y/(float)pTex->Size.Y);
+	glVertex2f(pLocation->uLeft, pLocation->uTop);
+
+	glEnd();
+
+	// turn off texture mapping
+	glDisable(GL_TEXTURE_2D);
+
+	glDisable(GL_BLEND);
+}
+
 
 void SceneDrawer::Draw3DDepthMapTexture() 
 {
@@ -607,8 +758,9 @@ void SceneDrawer::glInit (int * pargc, char ** argv)
 
 	/**** Subwindow 2 *****/
     sub_windowHandle2 = glutCreateSubWindow (m_windowHandle, subwindow2_x, subwindow2_y, subwindow2_w, subwindow2_h);
-    
-	glutDisplayFunc (SceneDrawer::subwindow2_display);
+
+	glutDisplayFunc (SceneDrawer::drawDebugFrame);
+	//glutDisplayFunc (SceneDrawer::subwindow2_display);
 	glutReshapeFunc(SceneDrawer::subwindow2_reshape);
 	glutKeyboardFunc (SceneDrawer::glutKeyboard);
 	glutIdleFunc(SceneDrawer::glutIdle);

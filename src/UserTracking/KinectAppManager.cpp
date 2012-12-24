@@ -114,6 +114,14 @@ KinectAppManager::~KinectAppManager()
     Cleanup();
 }
 
+KinectDevice *KinectAppManager::GetKinectDevice(int deviceNumb)
+{
+	if(deviceNumb < m_KinectDeviceManager.size())
+		return m_KinectDeviceManager[deviceNumb];
+	else 
+		return NULL;
+}
+
 DefaultInitializerWithCalibPose::DefaultInitializerWithCalibPose()
 {
 

@@ -24,6 +24,7 @@
 
 #include "UserTracker.h"
 #include "KinectAppManager.h"
+#include "XnPlatform.h"
 
 #ifndef USE_GLES
 #if (XN_PLATFORM == XN_PLATFORM_MACOSX)
@@ -34,6 +35,32 @@
 #else
 #include "opengles.h"
 #endif
+
+typedef struct
+{
+	int X;
+	int Y;
+} IntPair;
+
+typedef struct  
+{
+	int uBottom;
+	int uLeft;
+	int uTop;
+	int uRight;
+} IntRect;
+
+typedef struct XnTextureMap
+{
+	IntPair Size;
+	IntPair OrigSize;
+	unsigned char* pMap;
+	unsigned int nBytesPerPixel;
+	GLuint nID;
+	GLenum nFormat;
+	bool bInitialized;
+	IntPair CurSize;
+} XnTextureMap;
 
 /// @brief Class to draw the scene for the sample
 /// 
@@ -94,7 +121,10 @@ private:
 
     /// @brief Does all initialization required for texture drawing.
     void InitTexture();
-
+	void TextureMapUpdate(XnTextureMap* pTex);
+	void TextureMapDraw(XnTextureMap* pTex, IntRect* pLocation);
+	void SceneDrawer::TextureMapInit(XnTextureMap* pTex, unsigned char* pBuffer, int nSizeX, int nSizeY, unsigned int nBytesPerPixel, int nCurX, int nCurY);
+	static void drawDebugFrame();
     /// @brief An internal callback which is called from inside DrawScene main loop to do the drawing.
     ///
     /// This method does the single frame update including both updating the user tracker and calling
@@ -109,6 +139,7 @@ private:
 	static void subwindow2_reshape (int width, int height);
 	static void subwindow1_mouse_motion(int x, int y) ;
 	static void subwindow1_mouse(int button, int state, int x, int y);
+
 #ifndef USE_GLES
     /// @brief An internal callback which is called from inside DrawScene main loop for background 
     /// frames.
@@ -143,6 +174,17 @@ private:
 	
 		return max_tmp;
 	};
+
+	int GetPowerOfTwo(int num)
+	{
+		int result = 1;
+
+		while (result < num)
+			result <<= 1;
+
+		return result;
+	};
+
 #endif // USE_GLES
 
 
@@ -161,6 +203,13 @@ private:
     int texWidth, texHeight;
     GLfloat texcoords[8];
     /// @}
+	GLubyte aDepthMap[640*480];
+	GLuint texture_rgb, texture_depth;
+	/* Texture maps for depth and image */
+	XnTextureMap g_texDepth;
+	XnTextureMap g_texImage;
+	XnTextureMap g_texBackground;
+
     XnPoint3D* pLimbsPosArr; ///< @brief used to store the limbs information
     XnFloat * pConfidenceArr; ///< @brief used to store the confidence of the limbs information
 
@@ -190,8 +239,6 @@ private:
 
     KinectAppManager *m_KinectApp;
     /// @}
-	GLubyte aDepthMap[640*480];
-	GLuint texture_rgb, texture_depth;
 };
 
 #endif // XNV_SCENE_DRAWER_H_

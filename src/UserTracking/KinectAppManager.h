@@ -45,6 +45,7 @@ public:
     /// 
     /// This method is called by the graphics when exiting and should clean everything up.
     virtual void Cleanup();
+	KinectDevice* GetKinectDevice(int deviceNumb);
     /// @brief destructor
     virtual ~KinectAppManager();
 	friend class KProgram;
