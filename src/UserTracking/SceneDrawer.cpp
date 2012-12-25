@@ -35,8 +35,8 @@ static EGLContext context = EGL_NO_CONTEXT;
 #endif
 
 // window size (X,Y) of the OpenGL portion
-#define GL_WIN_SIZE_X 1280
-#define GL_WIN_SIZE_Y 768
+#define GL_WIN_SIZE_X 1150
+#define GL_WIN_SIZE_Y 800
 #define GL_WINDOW_POS_X 300
 #define GL_WINDOW_POS_Y 0
 // Maximum number of limbs (lines) we will draw as a skeleton.
@@ -49,6 +49,8 @@ SceneDrawer *SceneDrawer::m_pSingleton=NULL;
 int SceneDrawer::m_windowHandle =0; 
 int SceneDrawer::sub_windowHandle1 =0; 
 int SceneDrawer::sub_windowHandle2 =0; 
+int SceneDrawer::sub_windowHandle3 =0; 
+
 // gap between subwindows
 #define GAP  5
 //  define the window position on screen
@@ -63,14 +65,18 @@ float main_window_h = GL_WIN_SIZE_Y;
 //  define the window position on screen
 float subwindow1_x = GAP;
 float subwindow1_y = GAP;
+float subwindow1_w = 320;
+float subwindow1_h = 480;
+
+float subwindow3_x = GAP + subwindow1_w + GAP;
+float subwindow3_y = GAP;
+float subwindow3_w = 640;
+float subwindow3_h = 480;
+
 float subwindow2_x = GAP;
 float subwindow2_y = GAP + 480 + GAP;
-
-//  variables representing the window size
-float subwindow1_w = 800;
-float subwindow1_h = 480;
 float subwindow2_w = 800;
-float subwindow2_h = 240;
+float subwindow2_h = 300;
 
 //---------------------------------------------------------------------------
 // Code
@@ -133,9 +139,9 @@ SceneDrawer::SceneDrawer()
     g_bPause=FALSE;
 
 	//opengl texture
-	//g_texDepth = 
-	//g_texImage = XnTextureMap{0};
-	//g_texBackground = XnTextureMap{0};
+	memset(&g_texDepth,0, sizeof(g_texDepth));
+	memset(&g_texImage,0, sizeof(g_texImage));
+	memset(&g_texBackground,0, sizeof(g_texBackground));
 
     // buffer initialization
     pLimbsPosArr=XN_NEW_ARR(XnPoint3D,(MAX_LIMBS*2));
@@ -163,7 +169,8 @@ void SceneDrawer::DrawDepthMapTexture()
 
     if (g_bDrawPixels)
     {
-        m_pUserTrackerObj->FillTexture(pDepthTexBuf,texWidth,texHeight,g_bDrawBackground);
+        //m_pUserTrackerObj->FillTexture(pDepthTexBuf,texWidth,texHeight,g_bDrawBackground);
+        //m_pUserTrackerObj->FillTexture(pDepthTexBuf,640,480,g_bDrawBackground);
     }
     else
     {
@@ -172,7 +179,9 @@ void SceneDrawer::DrawDepthMapTexture()
 
     // makes sure we draw the relevant texture
     glBindTexture(GL_TEXTURE_2D, depthTexID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, pDepthTexBuf);
+	KinectDevice *m_Kinect = m_KinectApp->GetKinectDevice(0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, m_Kinect->getColoredDepthBuffer());
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, m_Kinect->getColoredDepthBuffer());
 
     // Display the OpenGL texture map
     glColor4f(0.75,0.75,0.75,1);
@@ -316,7 +325,25 @@ void SceneDrawer::ExitSample(int exitCode)
     exit(exitCode);
 }
 
+void SceneDrawer::fixLocation(IntRect* pLocation, int xRes, int yRes)
+{
+	double resRatio = (double)xRes / yRes;
 
+	double locationRatio = (pLocation->uRight - pLocation->uLeft) / (pLocation->uTop - pLocation->uBottom);
+
+	if (locationRatio > resRatio) 
+	{
+		// location is wider. use height as reference.
+		double width = (pLocation->uTop - pLocation->uBottom) * resRatio;
+		pLocation->uRight = (pLocation->uLeft + width);
+	}
+	else if (locationRatio < resRatio)
+	{
+		// res is wider. use width as reference.
+		double height = (pLocation->uRight - pLocation->uLeft) / resRatio;
+		pLocation->uTop = (pLocation->uBottom + height);
+	}
+}
 
 void SceneDrawer::InitTexture()
 {
@@ -333,9 +360,10 @@ void SceneDrawer::InitTexture()
 
     // initialize the texture
 	depthTexID = 0;
-	glutSetWindow(sub_windowHandle2);
+	glutSetWindow(sub_windowHandle3);
     glGenTextures(1,&depthTexID);
-    pDepthTexBuf = new unsigned char[texWidth*texHeight*4];
+    //pDepthTexBuf = new unsigned char[texWidth*texHeight*4];
+	pDepthTexBuf = new unsigned char[640*480*3];
     glBindTexture(GL_TEXTURE_2D,depthTexID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -356,10 +384,6 @@ void SceneDrawer::InitTexture()
     texcoords[2] = (float)g_nXRes/texWidth;
     texcoords[7] = (float)g_nYRes/texHeight;
 
-	KinectDevice *m_Kinect = m_KinectApp->GetKinectDevice(0);
-
-	TextureMapInit(&g_texDepth, m_Kinect->getDepthBuffer(), 640, 480, 4, 640, 480);
-	TextureMapInit(&g_texImage, m_Kinect->getColorBuffer(), 640, 480, 4, 640, 480);
 }
 
 void SceneDrawer::subwindow2_display (void)
@@ -466,9 +490,10 @@ void SceneDrawer::subwindow1_mouse(int button, int state, int x, int y) {
 
 void SceneDrawer::drawDebugFrame()
 {
-	IntRect DepthLocation;
+ 	IntRect DepthLocation;
 	IntRect ImageLocation;
-    SceneDrawer *singleton=GetInstance();
+
+	SceneDrawer *singleton=GetInstance();
     if(singleton->g_bPause==FALSE)
         singleton->m_pUserTrackerObj->UpdateFrame();
 
@@ -483,10 +508,30 @@ void SceneDrawer::drawDebugFrame()
 	ImageLocation.uLeft = 0;
 	ImageLocation.uRight = subwindow2_w - 1;
 
-	DepthLocation.uTop = subwindow2_h / 2 - 1;
+	DepthLocation.uTop = subwindow2_h - 1;
 	DepthLocation.uRight = subwindow2_w / 2 - 1;
-	ImageLocation.uTop = subwindow2_h / 2 - 1;
+	ImageLocation.uTop = subwindow2_h - 1;
 	ImageLocation.uLeft = subwindow2_w / 2;
+
+	KinectDevice *m_Kinect = singleton->m_KinectApp->GetKinectDevice(0);
+	glutSetWindow(SceneDrawer::sub_windowHandle2);
+	singleton->TextureMapInit(&singleton->g_texDepth, m_Kinect->getColoredDepthBuffer(), m_Kinect->getDepthMetaData()->FullXRes(),
+															m_Kinect->getDepthMetaData()->FullXRes(), 
+															3, 
+															m_Kinect->getDepthMetaData()->XRes(),
+															m_Kinect->getDepthMetaData()->XRes());
+	/*singleton->TextureMapInit(&singleton->g_texDepth, singleton->pDepthTexBuf, m_Kinect->getDepthMetaData()->FullXRes(),
+															m_Kinect->getDepthMetaData()->FullXRes(), 
+															3, 
+															m_Kinect->getDepthMetaData()->XRes(),
+															m_Kinect->getDepthMetaData()->XRes());*/
+	singleton->fixLocation(&DepthLocation, m_Kinect->getDepthMetaData()->FullXRes(), m_Kinect->getDepthMetaData()->FullYRes());
+	singleton->TextureMapInit(&singleton->g_texImage, m_Kinect->getColorBuffer(), m_Kinect->getImageMetaData()->FullXRes(),
+															m_Kinect->getImageMetaData()->FullXRes(), 
+															3, 
+															m_Kinect->getImageMetaData()->XRes(),
+															m_Kinect->getImageMetaData()->XRes());
+	singleton->fixLocation(&ImageLocation, m_Kinect->getImageMetaData()->FullXRes(), m_Kinect->getImageMetaData()->FullYRes());
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -519,10 +564,6 @@ void SceneDrawer::TextureMapInit(XnTextureMap* pTex, unsigned char* pBuffer, int
 		}
 	}
 
-	// free memory if it was allocated
-	if (pTex->pMap != NULL)
-		delete pTex->pMap;
-
 	// update it all
 	pTex->OrigSize.X = nSizeX;
 	pTex->OrigSize.Y = nSizeY;
@@ -548,7 +589,7 @@ void SceneDrawer::TextureMapInit(XnTextureMap* pTex, unsigned char* pBuffer, int
 			break;
 		}
 
-		//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -562,7 +603,8 @@ void SceneDrawer::TextureMapUpdate(XnTextureMap* pTex)
 	glBindTexture(GL_TEXTURE_2D, pTex->nID);
 
 	// set the current image to the texture
-	glTexImage2D(GL_TEXTURE_2D, 0, pTex->nFormat, pTex->Size.X, pTex->Size.Y, 0, pTex->nFormat, GL_UNSIGNED_BYTE, pTex->pMap);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pTex->Size.X, pTex->Size.Y, 0, GL_RGB, GL_UNSIGNED_BYTE, pTex->pMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, pTex->pMap);
 }
 
 
@@ -665,6 +707,7 @@ void SceneDrawer::Draw3DDepthMapTexture()
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texture_rgb);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, pImageMap);
+
 	glBegin(GL_POINTS);
 	for(unsigned int y=0; y<yres-1; y++) {
 		for(unsigned int x=0; x<630; x++) {
@@ -685,12 +728,15 @@ void SceneDrawer::Draw3DDepthMapTexture()
 #ifndef USE_GLES
 void SceneDrawer::glutIdle (void)
 {
+	//glutSetWindow(KProgram::mWindowHandle);
+    //glutPostRedisplay();
 	glutSetWindow(SceneDrawer::sub_windowHandle1);
     glutPostRedisplay();
 	glutSetWindow(SceneDrawer::sub_windowHandle2);
 	glutPostRedisplay();
-	glutSetWindow(KProgram::mWindowHandle);
-    glutPostRedisplay();
+	glutSetWindow(SceneDrawer::sub_windowHandle3);
+	glutPostRedisplay();
+
 }
 
 
@@ -735,7 +781,7 @@ void SceneDrawer::glInit (int * pargc, char ** argv)
     glutInitWindowSize(GL_WIN_SIZE_X, GL_WIN_SIZE_Y);
 	glutInitWindowPosition(WINDOW_POS_X - GL_WIN_SIZE_X,WINDOW_POS_Y);
     m_windowHandle = glutCreateWindow ("User Selection Sample");
-	glutReshapeFunc(SceneDrawer::main_reshape);
+	//glutReshapeFunc(SceneDrawer::main_reshape);
 	glutDisplayFunc(SceneDrawer::main_display);
 
 	/**** Subwindow 1 *****/
@@ -756,17 +802,21 @@ void SceneDrawer::glInit (int * pargc, char ** argv)
     //glDisable(GL_DEPTH_TEST);
     //glEnable(GL_TEXTURE_2D);
 
-	/**** Subwindow 2 *****/
-    sub_windowHandle2 = glutCreateSubWindow (m_windowHandle, subwindow2_x, subwindow2_y, subwindow2_w, subwindow2_h);
-
-	glutDisplayFunc (SceneDrawer::drawDebugFrame);
-	//glutDisplayFunc (SceneDrawer::subwindow2_display);
-	glutReshapeFunc(SceneDrawer::subwindow2_reshape);
-	glutKeyboardFunc (SceneDrawer::glutKeyboard);
-	glutIdleFunc(SceneDrawer::glutIdle);
-
+	/**** Subwindow 3*****/
+	sub_windowHandle3 = glutCreateSubWindow (m_windowHandle, subwindow3_x, subwindow3_y, subwindow3_w, subwindow3_h);
+	glutDisplayFunc(SceneDrawer::subwindow2_display);
+	//glutReshapeFunc(SceneDrawer::subwindow3_reshape);
+    glutKeyboardFunc(SceneDrawer::glutKeyboard);
+    glutIdleFunc(SceneDrawer::glutIdle);
 	glEnableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
+
+	/**** Subwindow 2 *****/
+    sub_windowHandle2 = glutCreateSubWindow (m_windowHandle, subwindow2_x, subwindow2_y, subwindow2_w, subwindow2_h);
+	glutDisplayFunc (SceneDrawer::drawDebugFrame);
+	//glutReshapeFunc(SceneDrawer::subwindow2_reshape);
+	glutKeyboardFunc (SceneDrawer::glutKeyboard);
+	glutIdleFunc(SceneDrawer::glutIdle);
 }
 //-------------------------------------------------------------------------
 //  Main Window Display Function.
@@ -826,6 +876,15 @@ void SceneDrawer::main_reshape (int width, int height)
     glutSetWindow (sub_windowHandle2);
     glutPositionWindow (GAP, GAP+subwindow1_h+GAP);
     glutReshapeWindow (subwindow2_w, subwindow2_h);
+
+		//  Change the subwindow 2 dimensions as window dimensions change
+	subwindow3_w = (subwindow3_w * (width-GAP*2.0))/(main_window_w-GAP*2.0);
+	subwindow3_h = (subwindow3_h * (height-GAP*3.0))/(main_window_h-GAP*3.0);
+
+	//  Set subwindow 2 as current window and then reposition and resize it
+    glutSetWindow (sub_windowHandle3);
+    glutPositionWindow (GAP+subwindow3_w+GAP, GAP);
+    glutReshapeWindow (subwindow3_w, subwindow3_h);
 
 	//  Stay updated with the window width and height
 	main_window_w = width;
@@ -899,6 +958,41 @@ void SceneDrawer::subwindow2_reshape (int width, int height)
 
 	//  Notify that we are reshaping subwindow 1
 	printf ("Subwindow 2: ");
+
+	//  Print current width and height
+	printf ("Width: %d, Height: %d, Viewport Side: %d.\n", width, height, viewport_side);
+}
+
+//-------------------------------------------------------------------------
+//  SubWindow 2 Reshape Function.
+//
+//	Preserve aspect ratio of viewport when subwindow is resized.
+//-------------------------------------------------------------------------
+void SceneDrawer::subwindow3_reshape (int width, int height) 
+{
+	//  Represents a side of the viewport. A viewport is intended to
+	//  to take a square shape so that the aspect ratio is reserved
+	int viewport_side = 0;
+
+	//  Viewport x and y positions (Center viewport)
+	int viewport_x = 0, viewport_y = 0;
+	
+	//  Calculate viewport side
+	viewport_side = (width > height) ? height : width;
+
+	//  Calculate viewport position
+	viewport_x = (width - viewport_side) / 2;
+	viewport_y = (height - viewport_side) / 2;
+
+	//  Preserve aspect ratio
+	glViewport (viewport_x, viewport_y, viewport_side, viewport_side);
+
+	//  Set subwindow width and height
+	subwindow3_w = width;
+	subwindow3_h = height;
+
+	//  Notify that we are reshaping subwindow 1
+	printf ("Subwindow 3: ");
 
 	//  Print current width and height
 	printf ("Width: %d, Height: %d, Viewport Side: %d.\n", width, height, viewport_side);

@@ -28,9 +28,11 @@
 
 #ifndef USE_GLES
 #if (XN_PLATFORM == XN_PLATFORM_MACOSX)
-#include <GLUT/glut.h>
+	#include <GLUT/glut.h>
+	#include <OpenGL/gl.h>
 #else
-#include <GL/glut.h>
+	#include <GL/gl.h>
+	#include <GL/glut.h>
 #endif
 #else
 #include "opengles.h"
@@ -93,6 +95,7 @@ public:
 	static int m_windowHandle;
 	static int sub_windowHandle1;
 	static int sub_windowHandle2;
+	static int sub_windowHandle3;
 private:
     static SceneDrawer *m_pSingleton; ///< The singleton instance
     /// Private constructor just to make sure we can't create an object. Only GetInstance creates a 
@@ -124,7 +127,6 @@ private:
 	void TextureMapUpdate(XnTextureMap* pTex);
 	void TextureMapDraw(XnTextureMap* pTex, IntRect* pLocation);
 	void SceneDrawer::TextureMapInit(XnTextureMap* pTex, unsigned char* pBuffer, int nSizeX, int nSizeY, unsigned int nBytesPerPixel, int nCurX, int nCurY);
-	static void drawDebugFrame();
     /// @brief An internal callback which is called from inside DrawScene main loop to do the drawing.
     ///
     /// This method does the single frame update including both updating the user tracker and calling
@@ -133,10 +135,12 @@ private:
     /// the time in the while loop if we are using GLES.
     static void subwindow2_display (void);
 	static void subwindow1_display (void);
+	static void drawDebugFrame();
 	static void main_display (void);
 	static void main_reshape (int width, int height);
 	static void subwindow1_reshape (int width, int height);
 	static void subwindow2_reshape (int width, int height);
+	static void subwindow3_reshape (int width, int height);
 	static void subwindow1_mouse_motion(int x, int y) ;
 	static void subwindow1_mouse(int button, int state, int x, int y);
 
@@ -185,11 +189,11 @@ private:
 		return result;
 	};
 
+	void fixLocation(IntRect* pLocation, int xRes, int yRes);
+
 #endif // USE_GLES
 
-
-
-    // members
+	// members
     /// @brief A pointer to the user tracker object. This is where the scene drawer
     /// takes the information to draw and provides feedback from keyboard.
     UserTracker *m_pUserTrackerObj; 
@@ -198,17 +202,18 @@ private:
     /// @name TextureInitializationMembers
     /// members used for initializing the texture
     /// @{
+	XnTextureMap g_texDepth;
+	XnTextureMap g_texImage;
+	XnTextureMap g_texBackground;
 	GLuint depthTexID;
     unsigned char* pDepthTexBuf;
-    int texWidth, texHeight;
+	
+	int texWidth, texHeight;
     GLfloat texcoords[8];
     /// @}
 	GLubyte aDepthMap[640*480];
 	GLuint texture_rgb, texture_depth;
 	/* Texture maps for depth and image */
-	XnTextureMap g_texDepth;
-	XnTextureMap g_texImage;
-	XnTextureMap g_texBackground;
 
     XnPoint3D* pLimbsPosArr; ///< @brief used to store the limbs information
     XnFloat * pConfidenceArr; ///< @brief used to store the confidence of the limbs information

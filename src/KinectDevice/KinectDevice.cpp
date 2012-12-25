@@ -189,7 +189,7 @@ bool KinectDevice::Update()
 	readFrame();
 	//parse data to texture
 	ParseColorDepthData(&depthMetaData,&sceneMetaData,&imageMetaData);
-	ParseColoredDepthData(&depthMetaData,DepthColoringType::COLOREDDEPTH);
+	ParseColoredDepthData(&depthMetaData,DepthColoringType::LINEAR_HISTOGRAM);
 	Parse3DDepthData(&depthMetaData);
 	return true;
 }

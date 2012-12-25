@@ -30,12 +30,6 @@
 #include "KProgram.h"
 #include "KVertex.h"
 
-// the filename for saving/loading calibration.
-#define XN_CALIBRATION_FILE_NAME "UserCalibration.bin"
-
-#define SAMPLE_XML_PATH "../../Data/SamplesConfig.xml"
-
-
 float *UserTracker::s_pDepthHist=NULL;
 
 // initialization of different colors for different users

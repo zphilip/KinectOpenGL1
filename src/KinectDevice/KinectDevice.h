@@ -53,7 +53,7 @@ typedef vmml::vector<5, double> Vec6d;
 #define SHOW_HAND 0
 
 #define XN_CALIBRATION_FILE_NAME "UserCalibration.bin"
-#define CONFIG_XML_PATH "..\\..\\Data\\SamplesConfig.xml"
+#define CONFIG_XML_PATH "../../Data/SamplesConfig.xml"
 
 #define VALIDATE_GENERATOR(type, desc, generator)				\
 {																\
