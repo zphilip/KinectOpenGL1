@@ -35,7 +35,7 @@ static EGLContext context = EGL_NO_CONTEXT;
 #endif
 
 // window size (X,Y) of the OpenGL portion
-#define GL_WIN_SIZE_X 1150
+#define GL_WIN_SIZE_X 1300
 #define GL_WIN_SIZE_Y 800
 #define GL_WINDOW_POS_X 300
 #define GL_WINDOW_POS_Y 0
@@ -65,7 +65,7 @@ float main_window_h = GL_WIN_SIZE_Y;
 //  define the window position on screen
 float subwindow1_x = GAP;
 float subwindow1_y = GAP;
-float subwindow1_w = 320;
+float subwindow1_w = 640;
 float subwindow1_h = 480;
 
 float subwindow3_x = GAP + subwindow1_w + GAP;
@@ -75,7 +75,7 @@ float subwindow3_h = 480;
 
 float subwindow2_x = GAP;
 float subwindow2_y = GAP + 480 + GAP;
-float subwindow2_w = 800;
+float subwindow2_w = 1280;
 float subwindow2_h = 300;
 
 //---------------------------------------------------------------------------
@@ -169,8 +169,7 @@ void SceneDrawer::DrawDepthMapTexture()
 
     if (g_bDrawPixels)
     {
-        //m_pUserTrackerObj->FillTexture(pDepthTexBuf,texWidth,texHeight,g_bDrawBackground);
-        //m_pUserTrackerObj->FillTexture(pDepthTexBuf,640,480,g_bDrawBackground);
+        m_pUserTrackerObj->FillTexture(pDepthTexBuf,texWidth,texHeight,g_bDrawBackground);
     }
     else
     {
@@ -179,9 +178,7 @@ void SceneDrawer::DrawDepthMapTexture()
 
     // makes sure we draw the relevant texture
     glBindTexture(GL_TEXTURE_2D, depthTexID);
-	KinectDevice *m_Kinect = m_KinectApp->GetKinectDevice(0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, m_Kinect->getColoredDepthBuffer());
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, m_Kinect->getColoredDepthBuffer());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, pDepthTexBuf);
 
     // Display the OpenGL texture map
     glColor4f(0.75,0.75,0.75,1);
@@ -358,12 +355,13 @@ void SceneDrawer::InitTexture()
     texHeight = 2;
     while(texHeight < g_nYRes) texHeight<<=1;
 
+	texWidth = 640;
+	texHeight =480;
     // initialize the texture
 	depthTexID = 0;
 	glutSetWindow(sub_windowHandle3);
     glGenTextures(1,&depthTexID);
-    //pDepthTexBuf = new unsigned char[texWidth*texHeight*4];
-	pDepthTexBuf = new unsigned char[640*480*3];
+    pDepthTexBuf = new unsigned char[texWidth*texHeight*4];
     glBindTexture(GL_TEXTURE_2D,depthTexID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -383,7 +381,6 @@ void SceneDrawer::InitTexture()
     texcoords[1] = (float)g_nYRes/texHeight;
     texcoords[2] = (float)g_nXRes/texWidth;
     texcoords[7] = (float)g_nYRes/texHeight;
-
 }
 
 void SceneDrawer::subwindow2_display (void)
@@ -509,25 +506,20 @@ void SceneDrawer::drawDebugFrame()
 	ImageLocation.uRight = subwindow2_w - 1;
 
 	DepthLocation.uTop = subwindow2_h - 1;
-	DepthLocation.uRight = subwindow2_w / 2 - 1;
+	DepthLocation.uRight = subwindow2_w / 3 - 1;
 	ImageLocation.uTop = subwindow2_h - 1;
-	ImageLocation.uLeft = subwindow2_w / 2;
+	ImageLocation.uLeft = subwindow2_w / 3;
 
 	KinectDevice *m_Kinect = singleton->m_KinectApp->GetKinectDevice(0);
 	glutSetWindow(SceneDrawer::sub_windowHandle2);
 	singleton->TextureMapInit(&singleton->g_texDepth, m_Kinect->getColoredDepthBuffer(), m_Kinect->getDepthMetaData()->FullXRes(),
-															m_Kinect->getDepthMetaData()->FullXRes(), 
+															m_Kinect->getDepthMetaData()->FullYRes(), 
 															3, 
 															m_Kinect->getDepthMetaData()->XRes(),
 															m_Kinect->getDepthMetaData()->XRes());
-	/*singleton->TextureMapInit(&singleton->g_texDepth, singleton->pDepthTexBuf, m_Kinect->getDepthMetaData()->FullXRes(),
-															m_Kinect->getDepthMetaData()->FullXRes(), 
-															3, 
-															m_Kinect->getDepthMetaData()->XRes(),
-															m_Kinect->getDepthMetaData()->XRes());*/
 	singleton->fixLocation(&DepthLocation, m_Kinect->getDepthMetaData()->FullXRes(), m_Kinect->getDepthMetaData()->FullYRes());
 	singleton->TextureMapInit(&singleton->g_texImage, m_Kinect->getColorBuffer(), m_Kinect->getImageMetaData()->FullXRes(),
-															m_Kinect->getImageMetaData()->FullXRes(), 
+															m_Kinect->getImageMetaData()->FullYRes(), 
 															3, 
 															m_Kinect->getImageMetaData()->XRes(),
 															m_Kinect->getImageMetaData()->XRes());
@@ -567,8 +559,10 @@ void SceneDrawer::TextureMapInit(XnTextureMap* pTex, unsigned char* pBuffer, int
 	// update it all
 	pTex->OrigSize.X = nSizeX;
 	pTex->OrigSize.Y = nSizeY;
-	pTex->Size.X = GetPowerOfTwo(nSizeX);
-	pTex->Size.Y = GetPowerOfTwo(nSizeY);
+	//pTex->Size.X = GetPowerOfTwo(nSizeX);
+	//pTex->Size.Y = GetPowerOfTwo(nSizeY);
+	pTex->Size.X = nSizeX;
+	pTex->Size.Y = nSizeY;
 	pTex->nBytesPerPixel = nBytesPerPixel;
 	pTex->CurSize.X = nCurX;
 	pTex->CurSize.Y = nCurY;
@@ -603,8 +597,8 @@ void SceneDrawer::TextureMapUpdate(XnTextureMap* pTex)
 	glBindTexture(GL_TEXTURE_2D, pTex->nID);
 
 	// set the current image to the texture
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pTex->Size.X, pTex->Size.Y, 0, GL_RGB, GL_UNSIGNED_BYTE, pTex->pMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, pTex->pMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pTex->Size.X, pTex->Size.Y, 0, GL_RGB, GL_UNSIGNED_BYTE, pTex->pMap);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, pTex->pMap);
 }
 
 

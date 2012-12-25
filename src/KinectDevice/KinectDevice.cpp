@@ -431,7 +431,7 @@ void KinectDevice::Parse3DDepthData(xn::DepthMetaData * depthMetaData)
 	int skip = 1;
 	for (int y=0; y<Kinect::KINECT_DEPTH_HEIGHT; y+=skip)
 	{
-		unsigned char* destrow = mColoredDepthBuffer + (y*(KINECT_DEPTH_WIDTH))*3;
+		unsigned char* destrow = m3DDepthBuffer + (y*(KINECT_DEPTH_WIDTH))*3;
 		for (int x=0; x<Kinect::KINECT_DEPTH_WIDTH; x+=skip)
 		{
 		    int offset = x+y*KINECT_DEPTH_WIDTH;
