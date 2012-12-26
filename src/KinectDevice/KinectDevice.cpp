@@ -459,6 +459,7 @@ Vector3f KinectDevice::DepthToWorld(int x, int y, int depthValue)
     result.x() = float((x - cx_d) * depth * fx_d);
     result.y() = float((y - cy_d) * depth * fy_d);
 	result.z() = float(depth);
+	printf("World x is: %f, y is: %f, z is %f \n", result.x(), result.y(), result.z());
     return result;
 }
 /*

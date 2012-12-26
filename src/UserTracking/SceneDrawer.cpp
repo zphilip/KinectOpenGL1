@@ -757,7 +757,7 @@ void SceneDrawer::Draw3DDepthMapTexture1()
 	//glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
 	//glPushMatrix();
 	glLoadIdentity();
-	glTranslatef(0.0f,0.0f,-4.0f);//move forward 4 units
+	//glTranslatef(0.0f,0.0f,-4.0f);//move forward 4 units
 	glColor3f(0.0f,0.0f,1.0f); //blue color
 	glPointSize(10.0f);//set point size to 10 pixels
 	//-------------------------------------------------
@@ -766,15 +766,19 @@ void SceneDrawer::Draw3DDepthMapTexture1()
     glVertex3f(-1.0f,-1.0f,0.0f);//lower-left corner
 	for(unsigned int y=0; y<yres; y++) {
 		for(unsigned int x=0; x<xres; x++) {
-				glTexCoord2f(static_cast<float>(x)/static_cast<float>(640), static_cast<float>(y)/static_cast<float>(480));
+				//glTexCoord2f(static_cast<float>(x)/static_cast<float>(640), static_cast<float>(y)/static_cast<float>(480));
 				int offset = x+y*yres;
 				// Convert kinect data to world xyz coordinate
 				unsigned short rawDepth = tmpGrayPixels[offset];
 				Vector3f v = m_Kinect->DepthToWorld(x,y,rawDepth);
-				glVertex3f(v.x(), (yres-v.y()), -v.z()/2.00);
+				float rx = v.x();
+				float ry = v.y();
+				float rz = v.z();
+				glVertex3f(rx, (yres-ry), rz);
 		}
 	}
 	glEnd();
+	glFlush(); 
 	//glPopMatrix();
 }
 

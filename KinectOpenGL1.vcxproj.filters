@@ -93,6 +93,9 @@
     <ClCompile Include="src\UserTracking\KinectAppManager.cpp">
       <Filter>src\UserTracking</Filter>
     </ClCompile>
+    <ClCompile Include="KinectPCL.cpp">
+      <Filter>src\KinectDevice</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\KinectDevice\KinectDevice.h">
