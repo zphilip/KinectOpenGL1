@@ -189,7 +189,7 @@ bool KinectDevice::Update()
 	readFrame();
 	//parse data to texture
 	ParseColorDepthData(&depthMetaData,&sceneMetaData,&imageMetaData);
-	ParseColoredDepthData(&depthMetaData,DepthColoringType::LINEAR_HISTOGRAM);
+	ParseColoredDepthData(&depthMetaData,DepthColoringType::RAINBOW);
 	Parse3DDepthData(&depthMetaData);
 	return true;
 }
@@ -462,12 +462,12 @@ Vector3f KinectDevice::DepthToWorld(int x, int y, int depthValue)
     return result;
 }
 /*
-Point2i KinectDevice::WorldToColor(const Vec3f &pt)
+Vector2i KinectDevice::WorldToColor(const Vector3f &pt)
 {
     static const Matrix4 rotationMatrix(
-                            Vec3f(9.9984628826577793e-01f, 1.2635359098409581e-03f, -1.7487233004436643e-02f),
-                            Vec3f(-1.4779096108364480e-03f, 9.9992385683542895e-01f, -1.2251380107679535e-02f),
-                            Vec3f(1.7470421412464927e-02f, 1.2275341476520762e-02f, 9.9977202419716948e-01f));
+                            Vector3f(9.9984628826577793e-01f, 1.2635359098409581e-03f, -1.7487233004436643e-02f),
+                            Vector3f(-1.4779096108364480e-03f, 9.9992385683542895e-01f, -1.2251380107679535e-02f),
+                            Vector3f(1.7470421412464927e-02f, 1.2275341476520762e-02f, 9.9977202419716948e-01f));
     static const Vec3f translation(1.9985242312092553e-02f, -7.4423738761617583e-04f, -1.0916736334336222e-02f);
     static const Matrix4 finalMatrix = rotationMatrix.Transpose() * Matrix4::Translation(-translation);
     
@@ -476,15 +476,15 @@ Point2i KinectDevice::WorldToColor(const Vec3f &pt)
     static const double cx_rgb = 3.2894272028759258e+02;
     static const double cy_rgb = 2.6748068171871557e+02;
 
-    const Vec3f transformedPos = finalMatrix.TransformPoint(pt);
-    const float invZ = 1.0f / transformedPos.z;
+    const Vector3f transformedPos = finalMatrix.TransformPoint(pt);
+    const float invZ = 1.0f / transformedPos.z();
 
-    Point2i result;
-    result.x = Utility::Bound(cv::Math::Round((transformedPos.x * fx_rgb * invZ) + cx_rgb), 0, 639);
-    result.y = Utility::Bound(Math::Round((transformedPos.y * fy_rgb * invZ) + cy_rgb), 0, 479);
+    Vector2i result;
+    result.x() = Utility::Bound(cv::Math::Round((transformedPos.x * fx_rgb * invZ) + cx_rgb), 0, 639);
+    result.y() = Utility::Bound(Math::Round((transformedPos.y * fy_rgb * invZ) + cy_rgb), 0, 479);
     return result;
-}
-*/
+}*/
+
 //Parse color&depth Texture
 void KinectDevice::ParseColorDepthData(xn::DepthMetaData *depthMetaData,
 							xn::SceneMetaData *sceneMetaData,

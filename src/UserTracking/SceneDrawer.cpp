@@ -346,18 +346,20 @@ void SceneDrawer::InitTexture()
 {
     XnUInt16 g_nXRes; 
     XnUInt16 g_nYRes; 
-    m_pUserTrackerObj->GetImageRes(g_nXRes,g_nYRes);
+	m_pUserTrackerObj->GetImageRes(g_nXRes,g_nYRes);
+	KinectDevice *m_Kinect = m_KinectApp->GetKinectDevice(0);    
 
-    // get the width and height of the texture as the nearest power of two larger than the
+    // initialize the texture for depth+user tracking
+
+	// get the width and height of the texture as the nearest power of two larger than the
     // x/y resolution respectively.
     texWidth = 2;
     while(texWidth < g_nXRes) texWidth<<=1;
     texHeight = 2;
     while(texHeight < g_nYRes) texHeight<<=1;
-
+	//simply the texture to using the same size
 	texWidth = 640;
 	texHeight =480;
-    // initialize the texture
 	depthTexID = 0;
 	glutSetWindow(sub_windowHandle3);
     glGenTextures(1,&depthTexID);
@@ -368,6 +370,7 @@ void SceneDrawer::InitTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	
+	// initialize the texture for 3D texture
 	glutSetWindow(sub_windowHandle1);
 	glGenTextures(1, &texture_rgb);
 	glBindTexture(GL_TEXTURE_2D, texture_rgb);
@@ -381,6 +384,38 @@ void SceneDrawer::InitTexture()
     texcoords[1] = (float)g_nYRes/texHeight;
     texcoords[2] = (float)g_nXRes/texWidth;
     texcoords[7] = (float)g_nYRes/texHeight;
+
+	// initialize the texture for debugframe texture postion
+	DepthLocation.uBottom = 0;
+	DepthLocation.uTop = subwindow2_h - 1;
+	DepthLocation.uLeft = 0;
+	DepthLocation.uRight = subwindow2_w - 1;
+
+	ImageLocation.uBottom = 0;
+	ImageLocation.uTop = subwindow2_h - 1;
+	ImageLocation.uLeft = 0;
+	ImageLocation.uRight = subwindow2_w - 1;
+
+	DepthLocation.uTop = subwindow2_h - 1;
+	DepthLocation.uRight = subwindow2_w / 3 - 1;
+	ImageLocation.uTop = subwindow2_h - 1;
+	ImageLocation.uLeft = subwindow2_w / 3;
+
+	glutSetWindow(SceneDrawer::sub_windowHandle2);
+	int nXres = m_Kinect->getDepthMetaData()->FullXRes();
+	TextureMapInit(&g_texDepth, m_Kinect->getColoredDepthBuffer(), m_Kinect->getDepthMetaData()->FullXRes(),
+															m_Kinect->getDepthMetaData()->FullYRes(), 
+															3, 
+															m_Kinect->getDepthMetaData()->XRes(),
+															m_Kinect->getDepthMetaData()->XRes());
+	fixLocation(&DepthLocation, m_Kinect->getDepthMetaData()->FullXRes(), m_Kinect->getDepthMetaData()->FullYRes());
+	TextureMapInit(&g_texImage, m_Kinect->getColorBuffer(), m_Kinect->getImageMetaData()->FullXRes(),
+															m_Kinect->getImageMetaData()->FullYRes(), 
+															3, 
+															m_Kinect->getImageMetaData()->XRes(),
+															m_Kinect->getImageMetaData()->XRes());
+	fixLocation(&ImageLocation, m_Kinect->getImageMetaData()->FullXRes(), m_Kinect->getImageMetaData()->FullYRes());
+
 }
 
 void SceneDrawer::subwindow2_display (void)
@@ -405,8 +440,6 @@ void SceneDrawer::subwindow2_display (void)
 
     glDisable(GL_TEXTURE_2D);
 
-    if(singleton->g_bPause==FALSE)
-        singleton->m_pUserTrackerObj->UpdateFrame();
     if(singleton->m_pUserTrackerObj->GetExitPoseState(0)>=1.0f)
     {
         singleton->ExitSample(EXIT_SUCCESS);
@@ -457,9 +490,9 @@ void SceneDrawer::subwindow1_display (void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	SceneDrawer *singleton=GetInstance();
-    if(singleton->g_bPause==FALSE)
-        singleton->m_pUserTrackerObj->UpdateFrame();
-	singleton->Draw3DDepthMapTexture();
+    //if(singleton->g_bPause==FALSE)
+    //   singleton->m_pUserTrackerObj->UpdateFrame();
+	singleton->Draw3DDepthMapTexture1();
 	glutSwapBuffers();
 }
 
@@ -487,29 +520,11 @@ void SceneDrawer::subwindow1_mouse(int button, int state, int x, int y) {
 
 void SceneDrawer::drawDebugFrame()
 {
- 	IntRect DepthLocation;
-	IntRect ImageLocation;
-
 	SceneDrawer *singleton=GetInstance();
-    if(singleton->g_bPause==FALSE)
-        singleton->m_pUserTrackerObj->UpdateFrame();
-
+    //if(singleton->g_bPause==FALSE)
+    //    singleton->m_pUserTrackerObj->UpdateFrame();
 	// calculate locations
-	DepthLocation.uBottom = 0;
-	DepthLocation.uTop = subwindow2_h - 1;
-	DepthLocation.uLeft = 0;
-	DepthLocation.uRight = subwindow2_w - 1;
-
-	ImageLocation.uBottom = 0;
-	ImageLocation.uTop = subwindow2_h - 1;
-	ImageLocation.uLeft = 0;
-	ImageLocation.uRight = subwindow2_w - 1;
-
-	DepthLocation.uTop = subwindow2_h - 1;
-	DepthLocation.uRight = subwindow2_w / 3 - 1;
-	ImageLocation.uTop = subwindow2_h - 1;
-	ImageLocation.uLeft = subwindow2_w / 3;
-
+	/*
 	KinectDevice *m_Kinect = singleton->m_KinectApp->GetKinectDevice(0);
 	glutSetWindow(SceneDrawer::sub_windowHandle2);
 	singleton->TextureMapInit(&singleton->g_texDepth, m_Kinect->getColoredDepthBuffer(), m_Kinect->getDepthMetaData()->FullXRes(),
@@ -524,7 +539,7 @@ void SceneDrawer::drawDebugFrame()
 															m_Kinect->getImageMetaData()->XRes(),
 															m_Kinect->getImageMetaData()->XRes());
 	singleton->fixLocation(&ImageLocation, m_Kinect->getImageMetaData()->FullXRes(), m_Kinect->getImageMetaData()->FullYRes());
-
+	*/
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	// Setup the opengl env for fixed location view
@@ -535,9 +550,9 @@ void SceneDrawer::drawDebugFrame()
 	glDisable(GL_DEPTH_TEST); 
 
 	singleton->TextureMapUpdate(&singleton->g_texImage);
-	singleton->TextureMapDraw(&singleton->g_texImage, &ImageLocation);
+	singleton->TextureMapDraw(&singleton->g_texImage, &singleton->ImageLocation);
 	singleton->TextureMapUpdate(&singleton->g_texDepth);
-	singleton->TextureMapDraw(&singleton->g_texDepth, &DepthLocation);
+	singleton->TextureMapDraw(&singleton->g_texDepth, &singleton->DepthLocation);
 
 	glutSwapBuffers();
 }
@@ -647,8 +662,9 @@ void SceneDrawer::Draw3DDepthMapTexture()
 	xn::ImageGenerator *image = NULL;
 	xn::DepthMetaData pDepthMapMD;
 	xn::ImageMetaData pImageMapMD;
-	depth = m_pUserTrackerObj->GetDepthGenerator();
-	image = m_pUserTrackerObj->GetImageGenerator();
+	KinectDevice *m_Kinect = m_KinectApp->GetKinectDevice(0);    
+	depth = m_Kinect->getDepthGenerator();
+	image = m_Kinect->getImageGenerator();
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -666,7 +682,7 @@ void SceneDrawer::Draw3DDepthMapTexture()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
-	rot_angle+=0.7;
+	//rot_angle+=0.7;
 
 	// Aktuelle Depth Metadaten auslesen
 	depth->GetMetaData(pDepthMapMD);
@@ -719,9 +735,55 @@ void SceneDrawer::Draw3DDepthMapTexture()
 	glDisable(GL_TEXTURE_2D);
 }
 
+
+void SceneDrawer::Draw3DDepthMapTexture1() 
+{
+	xn::DepthGenerator *depth = NULL;
+	xn::ImageGenerator *image = NULL;
+	KinectDevice *m_Kinect = m_KinectApp->GetKinectDevice(0);    
+	xn::DepthMetaData *pDepthMapMD = m_Kinect->getDepthMetaData();
+	xn::ImageMetaData *pImageMapMD = m_Kinect->getImageMetaData();
+	unsigned short *tmpGrayPixels = (unsigned short *)pDepthMapMD->Data();
+
+	depth = m_Kinect->getDepthGenerator();
+	image = m_Kinect->getImageGenerator();
+	const unsigned int xres = pDepthMapMD->XRes();
+	const unsigned int yres = pDepthMapMD->YRes();
+
+	if(maxdepth==-1)
+		maxdepth = depth->GetDeviceMaxDepth();
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+	//glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
+	//glPushMatrix();
+	glLoadIdentity();
+	glTranslatef(0.0f,0.0f,-4.0f);//move forward 4 units
+	glColor3f(0.0f,0.0f,1.0f); //blue color
+	glPointSize(10.0f);//set point size to 10 pixels
+	//-------------------------------------------------
+	glBegin(GL_POINTS);
+	glVertex3f(1.0f,1.0f,0.0f);//upper-right corner
+    glVertex3f(-1.0f,-1.0f,0.0f);//lower-left corner
+	for(unsigned int y=0; y<yres; y++) {
+		for(unsigned int x=0; x<xres; x++) {
+				glTexCoord2f(static_cast<float>(x)/static_cast<float>(640), static_cast<float>(y)/static_cast<float>(480));
+				int offset = x+y*yres;
+				// Convert kinect data to world xyz coordinate
+				unsigned short rawDepth = tmpGrayPixels[offset];
+				Vector3f v = m_Kinect->DepthToWorld(x,y,rawDepth);
+				glVertex3f(v.x(), (yres-v.y()), -v.z()/2.00);
+		}
+	}
+	glEnd();
+	//glPopMatrix();
+}
+
 #ifndef USE_GLES
 void SceneDrawer::glutIdle (void)
 {
+	SceneDrawer *singleton=GetInstance();
+	if(singleton->g_bPause==FALSE)
+		singleton->m_KinectApp->GetKinectDevice(0)->Update();
 	//glutSetWindow(KProgram::mWindowHandle);
     //glutPostRedisplay();
 	glutSetWindow(SceneDrawer::sub_windowHandle1);

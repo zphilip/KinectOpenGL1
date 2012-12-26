@@ -104,6 +104,8 @@ private:
 
     /// @brief Draws the texture which shows the depth and users in the scene.
     void DrawDepthMapTexture();
+	void Draw3DDepthMapTexture();
+	void Draw3DDepthMapTexture1();
 
     /// @brief Method to draw the labels (nUserId and state) for each user in the scene
     /// 
@@ -167,7 +169,6 @@ private:
     /// @param pargc Number of command line arguments (same as @ref main()).
     /// @param pargv The command line arguments (same as @ref main()).
     void glInit (int * pargc, char ** pargv);
-	void Draw3DDepthMapTexture();
 
 	int getMaxDepth(const XnDepthPixel* depthmap, int size=640*480) {
 		int max_tmp=0;
@@ -208,6 +209,8 @@ private:
 	GLuint depthTexID;
     unsigned char* pDepthTexBuf;
 	
+	IntRect DepthLocation;
+	IntRect ImageLocation;
 	int texWidth, texHeight;
     GLfloat texcoords[8];
     /// @}

@@ -160,9 +160,10 @@ public:
 							xn::SceneMetaData *sceneMetaData,
 							xn::ImageMetaData *imageMetaData);
 	void ParseColoredDepthData(xn::DepthMetaData *,DepthColoringType);
-	void KinectDevice::Parse3DDepthData(xn::DepthMetaData *);
-	void KinectDevice::drawColorImage();
-	
+	void Parse3DDepthData(xn::DepthMetaData *);
+	void drawColorImage();
+	Vector3f DepthToWorld(int x, int y, int depthValue);
+	Vector2i WorldToColor(const Vector3f &pt);
 	//update the frame
 	virtual bool Update();  //all buffer and texture is updated
 
@@ -221,20 +222,24 @@ public:
 		return m_AudioGenerator.IsValid() ? &m_AudioGenerator : NULL;
 	}
 
-	const xn::DepthMetaData* getDepthMetaData()
+	xn::DepthMetaData* getDepthMetaData()
 	{
+		m_DepthGenerator.GetMetaData(depthMetaData);
 		return m_DepthGenerator.IsValid() ? &depthMetaData : NULL;
 	}
-	const xn::ImageMetaData* getImageMetaData()
+	xn::ImageMetaData* getImageMetaData()
 	{
+		m_ImageGenerator.GetMetaData(imageMetaData);
 		return m_ImageGenerator.IsValid() ? &imageMetaData : NULL;
 	}
-	const xn::IRMetaData* getIRMetaData()
+	xn::IRMetaData* getIRMetaData()
 	{
+		m_IRGenerator.GetMetaData(irMetaData);
 		return m_IRGenerator.IsValid() ? &irMetaData : NULL;
 	}
-	const xn::AudioMetaData* getAudioMetaData()
+	xn::AudioMetaData* getAudioMetaData()
 	{
+		m_AudioGenerator.GetMetaData(audioMetaData);
 		return m_AudioGenerator.IsValid() ? &audioMetaData : NULL;
 	}
 
@@ -322,8 +327,7 @@ protected:
 	void RawDepthToMeters1(void);
 	void CalculateHistogram();
 	void CreateRainbowPallet();
-	Vector3f DepthToWorld(int x, int y, int depthValue);
-	Vector2i WorldToColor(const Vector3f &pt);
+
 };
 
 }
