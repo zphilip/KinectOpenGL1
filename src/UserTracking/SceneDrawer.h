@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 *                                                                           *
 *  OpenNI 1.x Alpha                                                         *
 *  Copyright (C) 2011 PrimeSense Ltd.                                       *
@@ -106,7 +106,7 @@ private:
     void DrawDepthMapTexture();
 	void Draw3DDepthMapTexture();
 	void Draw3DDepthMapTexture1();
-
+	void Draw3DMesh (void);
     /// @brief Method to draw the labels (nUserId and state) for each user in the scene
     /// 
     /// @param nUserId The user whose labels we will draw. 
@@ -129,6 +129,11 @@ private:
 	void TextureMapUpdate(XnTextureMap* pTex);
 	void TextureMapDraw(XnTextureMap* pTex, IntRect* pLocation);
 	void SceneDrawer::TextureMapInit(XnTextureMap* pTex, unsigned char* pBuffer, int nSizeX, int nSizeY, unsigned int nBytesPerPixel, int nCurX, int nCurY);
+	void Depth3DMeshInit(void);
+	static void Depth3DMeshReshape(int width, int height);
+
+	void Depth3DMapTextureinitGL();
+	void Depth3DMeshinitGL();
     /// @brief An internal callback which is called from inside DrawScene main loop to do the drawing.
     ///
     /// This method does the single frame update including both updating the user tracker and calling
@@ -169,6 +174,45 @@ private:
     /// @param pargc Number of command line arguments (same as @ref main()).
     /// @param pargv The command line arguments (same as @ref main()).
     void glInit (int * pargc, char ** pargv);
+	//---------------------------------------------------------------------------
+	// ベクトル・行列演算関数
+
+	// ベクトルの長さを返す
+	float length(const float* vec)
+	{
+		return sqrtf(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
+	}
+
+	// ベクトルの外積を計算
+	void cross(const float* vec0, const float* vec1, float* dest)
+	{
+		dest[0] = vec0[1] * vec1[2] - vec0[2] * vec1[1];
+		dest[1] = vec0[2] * vec1[0] - vec0[0] * vec1[2];
+		dest[2] = vec0[0] * vec1[1] - vec0[1] * vec1[0];
+	}
+
+	// 三角形ポリゴンの法線ベクトルを計算
+	void normal(const float* vec0, const float* vec1, const float* vec2, float* norm)
+	{
+		float r10[3], r20[3], crs[3];
+		for (int i = 0; i < 3; ++i)
+		{
+			r10[i] = vec0[i] - vec1[i];
+			r20[i] = vec0[i] - vec2[i];
+		}
+		cross(r10, r20, crs);
+
+		float len = length(crs);
+		if (len == 0.0) {
+			norm[0] = 0;
+			norm[1] = 0;
+			norm[2] = 1;
+		} else {
+			norm[0] = crs[0] / len;
+			norm[1] = crs[1] / len;
+			norm[2] = crs[2] / len;
+		}
+	}
 
 	int getMaxDepth(const XnDepthPixel* depthmap, int size=640*480) {
 		int max_tmp=0;

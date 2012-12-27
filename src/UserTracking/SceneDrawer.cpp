@@ -94,6 +94,7 @@ void SceneDrawer::DrawScene(UserTracker *pUserTrackerObj,int argc, char **argv,K
 	//KProgram::initGlut(argc, argv);
     glInit(&argc, argv);
 #endif
+	Depth3DMeshInit();
     InitTexture();
 #ifndef USE_GLES
     glutMainLoop();
@@ -371,7 +372,7 @@ void SceneDrawer::InitTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	
 	// initialize the texture for 3D texture
-	glutSetWindow(sub_windowHandle1);
+	//glutSetWindow(sub_windowHandle1);
 	//glGenTextures(1, &texture_rgb);
 	//glBindTexture(GL_TEXTURE_2D, texture_rgb);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -415,11 +416,12 @@ void SceneDrawer::InitTexture()
 															m_Kinect->getImageMetaData()->XRes(),
 															m_Kinect->getImageMetaData()->XRes());
 	fixLocation(&ImageLocation, m_Kinect->getImageMetaData()->FullXRes(), m_Kinect->getImageMetaData()->FullYRes());
-
 }
 
 void SceneDrawer::subwindow2_display (void)
 {
+	glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Setup the OpenGL viewpoint
@@ -488,11 +490,13 @@ int maxdepth=-1;
 
 void SceneDrawer::subwindow1_display (void)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glPushMatrix();
 	SceneDrawer *singleton=GetInstance();
     //if(singleton->g_bPause==FALSE)
     //   singleton->m_pUserTrackerObj->UpdateFrame();
-	singleton->Draw3DDepthMapTexture1();
+	//singleton->Draw3DDepthMapTexture1();
+	singleton->Draw3DMesh();
+	glPopMatrix();
 	glutSwapBuffers();
 }
 
@@ -655,7 +659,6 @@ void SceneDrawer::TextureMapDraw(XnTextureMap* pTex, IntRect* pLocation)
 	glDisable(GL_BLEND);
 }
 
-
 void SceneDrawer::Draw3DDepthMapTexture() 
 {
 	xn::DepthGenerator *depth = NULL;
@@ -665,7 +668,8 @@ void SceneDrawer::Draw3DDepthMapTexture()
 	KinectDevice *m_Kinect = m_KinectApp->GetKinectDevice(0);    
 	depth = m_Kinect->getDepthGenerator();
 	image = m_Kinect->getImageGenerator();
-
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -794,6 +798,294 @@ void SceneDrawer::Draw3DDepthMapTexture1()
 	glDisable(GL_DEPTH_TEST);
 }
 
+// 画像の横幅（単位はOpenGLにおける長さ）
+#define PLANE_SIZE 5.0
+
+// ポリゴンが繋がっていないと判断する閾値（単位はOpenGLにおける長さ）
+#define SPLIT_THRESHOLD		0.5
+
+#define MAX_DEPTH 10000
+float g_pDepthHist[MAX_DEPTH];
+XnRGB24Pixel* g_pTexMap = NULL;
+unsigned int g_nTexMapX = 0;
+unsigned int g_nTexMapY = 0;
+
+float* g_pVertices3f = NULL;			// 頂点バッファ
+float* g_pNormals3f = NULL;				// 法線バッファ
+
+// ↓分割数。これを小さくすると表示が荒く、大きくすると細かくなる
+unsigned int g_nPolyX = 160; //640;		// 横方向の格子数
+unsigned int g_nPolyY = 120; //480;		// 縦方向の格子数
+
+float gRotateMat[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };	// カメラ回転行列
+float gPanVec[]      = { 0.0, 0.0, 0.0 };						// カメラ平行移動量
+
+void SceneDrawer::Depth3DMeshInit(void)
+{
+	KinectDevice *m_Kinect = m_KinectApp->GetKinectDevice(0);    
+	xn::DepthMetaData *g_depthMD = m_Kinect->getDepthMetaData();
+	xn::ImageMetaData *g_imageMD = m_Kinect->getImageMetaData();
+	
+	// デプスマップをカメラ画像に位置合わせ
+	m_Kinect->getDepthGenerator()->GetAlternativeViewPointCap().SetViewPoint(*m_Kinect->getImageGenerator());
+	// Texture map init
+	g_nTexMapX = (((unsigned short)(g_depthMD->FullXRes()-1) / 512) + 1) * 512;
+	g_nTexMapY = (((unsigned short)(g_depthMD->FullYRes()-1) / 512) + 1) * 512;
+	g_pTexMap = (XnRGB24Pixel*)malloc(g_nTexMapX * g_nTexMapY * sizeof(XnRGB24Pixel));
+
+	// 頂点バッファ確保
+	g_pVertices3f = (float*)calloc(g_nPolyX * g_nPolyY * 3, sizeof(float));
+
+	return;
+}
+void SceneDrawer::Depth3DMeshReshape(int width, int height)
+{
+	static const double kFovY = 40;
+	int tx=0, ty=0;
+    double nearDist, farDist, aspect;
+
+	//GLUI_Master.get_viewport_area(&tx, &ty, &width, &height);
+    glViewport(tx, ty, width, height);
+
+    // Compute the viewing parameters based on a fixed fov and viewing
+    // a canonical box centered at the origin.
+    nearDist = 1.0 / tan((kFovY / 2.0) * K_PI / 180.0);
+    farDist = nearDist + 100.0;
+    aspect = (double) width / height;
+   
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(kFovY, aspect, nearDist, farDist);
+
+    // Place the camera down the Z axis looking at the origin.
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();            
+    gluLookAt(0, 0, nearDist + 5.0,
+              0, 0, 0,
+              0, 1, 0);
+}
+
+//---------------------------------------------------------------------------
+// 描画処理
+
+// OpenGLの描画処理をここに書く。
+//   gluing.h から呼ばれます
+void SceneDrawer::Draw3DMesh (void)
+{
+	//gluPerspective(45, subwindow1_w/subwindow1_h, 1000, 5000);
+	glTranslatef(gPanVec[0] / 50.0, gPanVec[1] / 50.0, -gPanVec[2] / 10.0);		// Is "trans->set_spped()" not working?
+	glMultMatrixf(gRotateMat);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	KinectDevice *m_Kinect = m_KinectApp->GetKinectDevice(0);    
+	xn::DepthMetaData *g_depthMD = m_Kinect->getDepthMetaData();
+	xn::ImageMetaData *g_imageMD = m_Kinect->getImageMetaData();
+
+	const XnDepthPixel* pDepth = g_depthMD->Data();
+	const XnUInt8* pImage = g_imageMD->Data();
+
+	// Calculate the accumulative histogram
+	xnOSMemSet(g_pDepthHist, 0, MAX_DEPTH*sizeof(float));
+
+	unsigned int nNumberOfPoints = 0;
+	for (XnUInt y = 0; y < g_depthMD->YRes(); ++y)
+	{
+		for (XnUInt x = 0; x < g_depthMD->XRes(); ++x, ++pDepth)
+		{
+			if (*pDepth != 0)
+			{
+				g_pDepthHist[*pDepth]++;
+				nNumberOfPoints++;
+			}
+		}
+	}
+	for (int nIndex=1; nIndex<MAX_DEPTH; nIndex++)
+	{
+		g_pDepthHist[nIndex] += g_pDepthHist[nIndex-1];
+	}
+	if (nNumberOfPoints)
+	{
+		for (int nIndex=1; nIndex<MAX_DEPTH; nIndex++)
+		{
+			g_pDepthHist[nIndex] = (unsigned int)(256 * (1.0f - (g_pDepthHist[nIndex] / nNumberOfPoints)));
+		}
+	}
+
+	xnOSMemSet(g_pTexMap, 0, g_nTexMapX*g_nTexMapY*sizeof(XnRGB24Pixel));
+
+	// check if we need to draw image frame to texture
+	const XnRGB24Pixel* pImageRow = g_imageMD->RGB24Data();
+	XnRGB24Pixel* pTexRow = g_pTexMap + g_imageMD->YOffset() * g_nTexMapX;
+
+	for (XnUInt y = 0; y < g_imageMD->YRes(); ++y)
+	{
+		const XnRGB24Pixel* pImage = pImageRow;
+		XnRGB24Pixel* pTex = pTexRow + g_imageMD->XOffset();
+
+		for (XnUInt x = 0; x < g_imageMD->XRes(); ++x, ++pImage, ++pTex)
+		{
+			*pTex = *pImage;
+		}
+
+		pImageRow += g_imageMD->XRes();
+		pTexRow += g_nTexMapX;
+	}
+
+	// 頂点座標初期化
+	for (unsigned int y = 0; y < g_nPolyY; ++y)
+	{
+		for (unsigned int x = 0; x < g_nPolyX; ++x)
+		{
+			for (int i = 0; i < 3; ++i)
+			{
+				g_pVertices3f[(y * g_nPolyX + x) * 3 + i] = 0;
+			}
+		}
+	}
+
+	// 対応するポリゴン毎の深度の平均を求める。頂点バッファを一時的に作業領域に使っている
+	int px, py;
+	const XnDepthPixel* pDepthRow = g_depthMD->Data();
+	//XnRGB24Pixel* 
+	pTexRow = g_pTexMap + g_depthMD->YOffset() * g_nTexMapX;
+	int nXRes = g_depthMD->FullXRes();
+	int nYRes = g_depthMD->FullYRes();
+
+	for (XnUInt y = 0; y < nYRes; ++y)
+	{
+		py = (y + g_depthMD->YOffset()) * g_nPolyY / nYRes;
+
+		const XnDepthPixel* pDepth = pDepthRow;
+		XnRGB24Pixel* pTex = pTexRow + g_depthMD->XOffset();
+
+		for (XnUInt x = 0; x < nXRes; ++x, ++pDepth, ++pTex)
+		{
+			px = (x + g_depthMD->XOffset()) * g_nPolyX / nXRes;
+
+			if (*pDepth != 0)	// 深度0となっている画素は平均値の計算から除く
+			{
+				int nHistValue = g_pDepthHist[*pDepth];
+
+				// Z値の集計
+				g_pVertices3f[(py * g_nPolyX + px) * 3 + 2] +=  (float)nHistValue;	// 頂点ベクトルの第3要素に入れておく（ホントは値が違うけど）
+
+				// 面積の集計
+				g_pVertices3f[(py * g_nPolyX + px) * 3] += 1.0;		// 頂点ベクトルの第1要素に入れておく（ホントは用途が違うけど）
+			}
+		}
+
+		pDepthRow += g_depthMD->XRes();
+		pTexRow += g_nTexMapX;
+	}
+
+	// 頂点座標を計算
+	float dx = (float)PLANE_SIZE / (float)g_nPolyX;
+	float dy = (float)PLANE_SIZE * (float)nYRes / (float)nXRes / (float)g_nPolyY;
+	float xoffset = -(float)(PLANE_SIZE / 2);
+	float yoffset =  (float)(PLANE_SIZE / 2) * (float)nYRes / (float)nXRes;
+	float zoffset = -(float)(PLANE_SIZE / 2);
+	for (unsigned int y = 0; y < g_nPolyY; ++y)
+	{
+		for (unsigned int x = 0; x < g_nPolyX; ++x)
+		{
+			int index = (y * g_nPolyX + x) * 3;
+
+			if (g_pVertices3f[index] > 0.0) {
+				// 奥行き計測面積ゼロでなければZ座標を計算
+				g_pVertices3f[index + 2] /= (g_pVertices3f[index] * (float)PLANE_SIZE);
+			} else {
+				// 奥行き計測面積ゼロなら奥行きゼロとする
+				g_pVertices3f[index + 2] = 0.0;
+			}
+
+			g_pVertices3f[index] = dx * (float)x + xoffset;			// X座標
+			g_pVertices3f[index + 1] = dy * -(float)y + yoffset;	// Y座標
+			g_pVertices3f[index + 2] = (g_pVertices3f[index + 2] / 5.0) + zoffset;	// Z座標。5.0で割っているのは適当な凹凸に調節するため。
+		}
+	}
+	
+	// Create the OpenGL texture map
+	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, g_nTexMapX, g_nTexMapY, 0, GL_RGB, GL_UNSIGNED_BYTE, g_pTexMap);
+
+	// Display the OpenGL texture map
+	glColor4f(1,1,1,1);
+
+	// Enable texture
+	glEnable(GL_TEXTURE_2D);
+
+	// 凹凸を付けて描画
+	glBegin(GL_TRIANGLES);
+	float texWidth = (float)nXRes / (float)g_nTexMapX;
+	float texHeight = (float)nYRes / (float)g_nTexMapY;
+	for (unsigned int y = 0; y < g_nPolyY - 1; ++y)
+	{
+		for (unsigned int x = 0; x < g_nPolyX - 1; ++x)
+		{
+			// 対応するテクスチャの座標
+			float tx0 = ((float)x) / (float)(g_nPolyX - 1) * texWidth;
+			float ty0 = ((float)y) / (float)(g_nPolyY - 1) * texHeight;
+			float tx1 = ((float)x + 1) / (float)(g_nPolyX - 1) * texWidth;
+			float ty1 = ((float)y + 1) / (float)(g_nPolyY - 1) * texHeight;
+
+			// ポリゴンの頂点
+			float* pUL = g_pVertices3f + ((y * g_nPolyX + x) * 3);
+			float* pUR = pUL + 3;
+			float* pBR = pUL + (g_nPolyX * 3) + 3;
+			float* pBL = pUL + (g_nPolyX * 3);
+
+			// 法線を求める
+			float norm[3];
+
+			// 閾値以上離れているメッシュの処理
+			if (abs(pUR[2] - pUL[2]) > SPLIT_THRESHOLD || abs(pBR[2] - pBL[2]) > SPLIT_THRESHOLD
+				|| abs(pBL[2] - pUL[2]) > SPLIT_THRESHOLD || abs(pBR[2] - pUR[2]) > SPLIT_THRESHOLD) {
+// ちょっとトリッキーな書き方だけど、#ifの値で表示方法の選択ができる
+// ↓ 1…離れたポリゴンは切り離す，0…切り離さず色を変える
+#if 1
+					continue;					// 描画しない。つまり隣のポリゴンと切り離す
+#else
+					glColor3f(0.0, 1.0, 0.0);	// 切り離さず緑にする
+			} else {
+					glColor3f(1.0, 1.0, 1.0);	// 通常はテクスチャの色になるよう、白とする
+#endif
+			}
+
+			// 四角形の格子を書くには三角形が２つ要る
+
+			// 三角形その１
+			normal(pUL, pUR, pBR, norm);
+			glNormal3fv(norm);
+			// upper left
+			glTexCoord2f(tx0, ty0);
+			glVertex3fv(pUL);
+			// upper right
+			glTexCoord2f(tx1, ty0);
+			glVertex3fv(pUR);
+			// bottom right
+			glTexCoord2f(tx1, ty1);
+			glVertex3fv(pBR);
+
+			// 三角形その２
+			normal(pBL, pUL, pBR, norm);
+			glNormal3fv(norm);
+			// bottom left
+			glTexCoord2f(tx0, ty1);
+			glVertex3fv(pBL);
+			// upper right
+			glTexCoord2f(tx0, ty0);
+			glVertex3fv(pUL);
+			// bottom right
+			glTexCoord2f(tx1, ty1);
+			glVertex3fv(pBR);
+		}
+	}
+
+	glEnd();
+}
+
 #ifndef USE_GLES
 void SceneDrawer::glutIdle (void)
 {
@@ -846,6 +1138,58 @@ void SceneDrawer::glutKeyboard (unsigned char key, int /*x*/, int /*y*/)
     }
 }
 
+// Set up general OpenGL rendering properties: lights, depth buffering, etc.
+void SceneDrawer::Depth3DMeshinitGL()
+{
+	// Lighting
+    static const GLfloat light_model_ambient[] = {0.3f, 0.3f, 0.3f, 1.0f};
+
+    static const GLfloat light0_diffuse[] = {0.9f, 0.9f, 0.9f, 0.9f};
+    //static const GLfloat light0_direction[] = {-0.2f, -0.4f, 0.5f, 0.0f};
+    static const GLfloat light0_direction[] = {0.408f, 0.408f, -0.816f, 0.0f};
+
+    static const GLfloat light1_diffuse[] = {0.1f, 0.1f, 0.1f, 0.1f};
+    //static const GLfloat light1_direction[] = {-0.2f, 0.4f, 0.2f, 0.0f};
+    static const GLfloat light1_direction[] = {0.0f, 0.0f, -1.0f, 0.0f};
+    
+    // Enable depth buffering for hidden surface removal.
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_DEPTH_TEST);
+    
+    // Setup other misc features.
+    glEnable(GL_LIGHTING);
+    glEnable(GL_NORMALIZE);
+    glShadeModel(GL_SMOOTH);
+
+	glEnable(GL_COLOR_MATERIAL);
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    
+    // Setup lighting model.
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);    
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, light_model_ambient);
+
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse);
+    glLightfv(GL_LIGHT0, GL_POSITION, light0_direction);
+    glEnable(GL_LIGHT0);
+
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diffuse);
+    glLightfv(GL_LIGHT1, GL_POSITION, light1_direction);
+    glEnable(GL_LIGHT1);
+
+	// Background color
+	glClearColor(0.3, 0.5, 0.7, 1.0);
+}
+void SceneDrawer::Depth3DMapTextureinitGL()
+{
+	//glutFullScreen();
+	glutSetCursor(GLUT_CURSOR_NONE);
+	glClearColor(0, 0, 0, 0.0);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	//glDisable(GL_DEPTH_TEST);
+    //glEnable(GL_TEXTURE_2D);
+}
 void SceneDrawer::glInit (int * pargc, char ** argv)
 {
 	glutInit(pargc, argv);
@@ -853,26 +1197,20 @@ void SceneDrawer::glInit (int * pargc, char ** argv)
     glutInitWindowSize(GL_WIN_SIZE_X, GL_WIN_SIZE_Y);
 	glutInitWindowPosition(WINDOW_POS_X - GL_WIN_SIZE_X,WINDOW_POS_Y);
     m_windowHandle = glutCreateWindow ("User Selection Sample");
-	//glutReshapeFunc(SceneDrawer::main_reshape);
+	glutReshapeFunc(SceneDrawer::main_reshape);
 	glutDisplayFunc(SceneDrawer::main_display);
-
+	
 	/**** Subwindow 1 *****/
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	sub_windowHandle1 = glutCreateSubWindow (m_windowHandle, subwindow1_x, subwindow1_y, subwindow1_w, subwindow1_h);
-	//glutFullScreen();
-    glutSetCursor(GLUT_CURSOR_NONE);
-	glClearColor(0, 0, 0, 0.0);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
+	Depth3DMeshinitGL();
 	glutDisplayFunc(SceneDrawer::subwindow1_display);
-	glutReshapeFunc(SceneDrawer::subwindow1_reshape);
+	//glutReshapeFunc(SceneDrawer::subwindow1_reshape);
+	glutReshapeFunc(SceneDrawer::Depth3DMeshReshape);		
     glutKeyboardFunc(SceneDrawer::glutKeyboard);
     glutIdleFunc(SceneDrawer::glutIdle);
 	glutMouseFunc(SceneDrawer::subwindow1_mouse);
 	glutMotionFunc(SceneDrawer::subwindow1_mouse_motion);
-
-    //glDisable(GL_DEPTH_TEST);
-    //glEnable(GL_TEXTURE_2D);
 
 	/**** Subwindow 3*****/
 	sub_windowHandle3 = glutCreateSubWindow (m_windowHandle, subwindow3_x, subwindow3_y, subwindow3_w, subwindow3_h);
@@ -880,8 +1218,7 @@ void SceneDrawer::glInit (int * pargc, char ** argv)
 	//glutReshapeFunc(SceneDrawer::subwindow3_reshape);
     glutKeyboardFunc(SceneDrawer::glutKeyboard);
     glutIdleFunc(SceneDrawer::glutIdle);
-	glEnableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
+
 
 	/**** Subwindow 2 *****/
     sub_windowHandle2 = glutCreateSubWindow (m_windowHandle, subwindow2_x, subwindow2_y, subwindow2_w, subwindow2_h);
