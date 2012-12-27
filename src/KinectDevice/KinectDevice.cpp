@@ -39,7 +39,7 @@ void KinectDevice::RawDepthToMeters3(void)
 		mGammaMap[i] = (unsigned short)(float)(powf(i/2048.0f, 3)*6*6*256);
 }
 
-KinectDevice::KinectDevice()
+KinectDevice::KinectDevice() 
 {
 	memset(mDepthBuffer,0,KINECT_COLOR_WIDTH * KINECT_COLOR_HEIGHT);
 	memset(mColorBuffer,0,KINECT_COLOR_WIDTH * KINECT_COLOR_HEIGHT * 3);
@@ -177,6 +177,13 @@ XnStatus KinectDevice::initPrimeSensor()
 		m_pEndPoseDetector = new EndPoseDetector(m_UserGenerator, 2.0);
 		m_pEndPoseDetector->SetUserId(m_candidateID);
 
+		//init the depth point cloud
+		XnMapOutputMode m_depth_mode; 
+        m_depth_mode.nXRes = XN_VGA_X_RES; 
+        m_depth_mode.nYRes = XN_VGA_Y_RES; 
+        m_depth_mode.nFPS = 30; 
+		m_DepthPointCloud = new DepthmapPointCloud(m_Context,m_DepthGenerator,m_depth_mode);
+
  		return XN_STATUS_OK;
 }
 
@@ -191,6 +198,7 @@ bool KinectDevice::Update()
 	ParseColorDepthData(&depthMetaData,&sceneMetaData,&imageMetaData);
 	ParseColoredDepthData(&depthMetaData,DepthColoringType::RAINBOW);
 	Parse3DDepthData(&depthMetaData);
+	m_DepthPointCloud->updataPointCloud();
 	return true;
 }
 
@@ -459,7 +467,7 @@ Vector3f KinectDevice::DepthToWorld(int x, int y, int depthValue)
     result.x() = float((x - cx_d) * depth * fx_d);
     result.y() = float((y - cy_d) * depth * fy_d);
 	result.z() = float(depth);
-	printf("World x is: %f, y is: %f, z is %f \n", result.x(), result.y(), result.z());
+	//printf("World x is: %f, y is: %f, z is %f \n", result.x(), result.y(), result.z());
     return result;
 }
 /*
@@ -738,6 +746,7 @@ void KinectDevice::GetImageRes(XnUInt16 &xRes, XnUInt16 &yRes)
 
 void KinectDevice::closeDevice()
 {
+	m_DepthPointCloud->stop();
 	m_DepthGenerator.Release();
 	m_ImageGenerator.Release();
 	m_IRGenerator.Release();

@@ -93,9 +93,6 @@
     <ClCompile Include="src\UserTracking\KinectAppManager.cpp">
       <Filter>src\UserTracking</Filter>
     </ClCompile>
-    <ClCompile Include="KinectPCL.cpp">
-      <Filter>src\KinectDevice</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\KinectDevice\KinectDevice.h">
@@ -307,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="src\UserTracking\KinectAppManager.h">
       <Filter>src\UserTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectDevice\KinectPCL.h">
+      <Filter>src\KinectDevice</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

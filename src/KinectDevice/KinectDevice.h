@@ -12,6 +12,7 @@
 #include "SkeletonPoseDetector.h"
 #include <vmmlib/vector.hpp>
 #include <vmmlib/math.hpp>
+#include "KinectPCL.h"
 
 using namespace vmml;
 
@@ -257,6 +258,12 @@ public:
 	{
 		return mColoredDepthBuffer; 
 	}
+	
+	DepthmapPointCloud * getDepthPointCloud()
+	{
+		return m_DepthPointCloud; 
+	}
+
 protected:
 
 	xn::Device m_Device;
@@ -303,7 +310,7 @@ protected:
 	xn::AudioMetaData audioMetaData;
 
 	//Kinect Data Buffer
-	unsigned long  mGammaMap[2048];
+	unsigned long   mGammaMap[2048];
 	unsigned char	mDepthBuffer[KINECT_DEPTH_WIDTH * KINECT_DEPTH_HEIGHT];  //also tempary depth Pixel for Ogre
 	unsigned char	mColorBuffer[KINECT_COLOR_WIDTH * KINECT_COLOR_HEIGHT * 3]; // also tmpeary colore pixel for Ogre
 	unsigned char	mUserBuffer[KINECT_COLOR_WIDTH * KINECT_COLOR_HEIGHT * 3]; // also tmpeary colore pixel for Ogre
@@ -311,6 +318,8 @@ protected:
 	unsigned char   m3DDepthBuffer[KINECT_DEPTH_WIDTH * KINECT_DEPTH_HEIGHT * 3]; //also tempeary colored depth pixel for Ogre
 	float mAudioBuffer[KINECT_MICROPHONE_COUNT][KINECT_AUDIO_BUFFER_LENGTH];
 	float depthHist[KINECT_MAX_DEPTH];
+	DepthmapPointCloud *m_DepthPointCloud;
+
 	XnUInt8 PalletIntsR [256];
 	XnUInt8 PalletIntsG [256];
 	XnUInt8 PalletIntsB [256];

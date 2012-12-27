@@ -372,12 +372,12 @@ void SceneDrawer::InitTexture()
 	
 	// initialize the texture for 3D texture
 	glutSetWindow(sub_windowHandle1);
-	glGenTextures(1, &texture_rgb);
-	glBindTexture(GL_TEXTURE_2D, texture_rgb);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	//glGenTextures(1, &texture_rgb);
+	//glBindTexture(GL_TEXTURE_2D, texture_rgb);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
     memset(texcoords, 0, 8*sizeof(float));
     texcoords[0] = (float)g_nXRes/texWidth;
@@ -752,11 +752,14 @@ void SceneDrawer::Draw3DDepthMapTexture1()
 
 	if(maxdepth==-1)
 		maxdepth = depth->GetDeviceMaxDepth();
-
+	glEnable(GL_DEPTH_TEST);
+	glEnable( GL_LIGHTING );
+	glMatrixMode( GL_PROJECTION );
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
 	//glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
 	//glPushMatrix();
 	glLoadIdentity();
+	glEnable( GL_LIGHT0 );  
 	//glTranslatef(0.0f,0.0f,-4.0f);//move forward 4 units
 	glColor3f(0.0f,0.0f,1.0f); //blue color
 	glPointSize(10.0f);//set point size to 10 pixels
@@ -764,6 +767,7 @@ void SceneDrawer::Draw3DDepthMapTexture1()
 	glBegin(GL_POINTS);
 	glVertex3f(1.0f,1.0f,0.0f);//upper-right corner
     glVertex3f(-1.0f,-1.0f,0.0f);//lower-left corner
+	/*
 	for(unsigned int y=0; y<yres; y++) {
 		for(unsigned int x=0; x<xres; x++) {
 				//glTexCoord2f(static_cast<float>(x)/static_cast<float>(640), static_cast<float>(y)/static_cast<float>(480));
@@ -774,12 +778,19 @@ void SceneDrawer::Draw3DDepthMapTexture1()
 				float rx = v.x();
 				float ry = v.y();
 				float rz = v.z();
-				glVertex3f(rx, (yres-ry), rz);
+				//glVertex3f(rx, (yres-ry), rz);
+				glVertex3f(x, (yres-y), rawDepth);
 		}
+	}*/
+	DepthmapPointCloud *m_PointCloud = m_Kinect->getDepthPointCloud();
+	XnPoint3D * m_PointCloudData = m_PointCloud->getPointCloudData();
+	for (unsigned int i=0; i<m_PointCloud->getPointCloudNum();i++)
+	{
+		glVertex3f(m_PointCloudData[i].X, (yres-m_PointCloudData[i].Y), m_PointCloudData[i].Z);
 	}
 	glEnd();
-	glFlush(); 
-	//glPopMatrix();
+	glPopMatrix();
+	glDisable(GL_DEPTH_TEST);
 }
 
 #ifndef USE_GLES

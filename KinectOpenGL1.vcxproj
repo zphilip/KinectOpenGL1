@@ -81,7 +81,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="KinectPCL.cpp" />
     <ClCompile Include="src\KinectDevice\KinectDevice.cpp" />
     <ClCompile Include="src\KinectDevice\KinectDeviceManager.cpp" />
     <ClCompile Include="src\KinectDevice\OgreKinect.cpp" />
@@ -110,6 +109,7 @@
   <ItemGroup>
     <ClInclude Include="src\KinectDevice\KinectDevice.h" />
     <ClInclude Include="src\KinectDevice\KinectDeviceManager.h" />
+    <ClInclude Include="src\KinectDevice\KinectPCL.h" />
     <ClInclude Include="src\KinectDevice\OgreKinect.h" />
     <ClInclude Include="src\KinectHeadTracking\defines.h" />
     <ClInclude Include="src\KinectHeadTracking\KCircle.h" />
