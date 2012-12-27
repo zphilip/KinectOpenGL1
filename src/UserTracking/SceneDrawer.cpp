@@ -753,13 +753,13 @@ void SceneDrawer::Draw3DDepthMapTexture1()
 	if(maxdepth==-1)
 		maxdepth = depth->GetDeviceMaxDepth();
 	glEnable(GL_DEPTH_TEST);
-	glEnable( GL_LIGHTING );
-	glMatrixMode( GL_PROJECTION );
+	glEnable(GL_LIGHTING);
+	//glMatrixMode( GL_PROJECTION );
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
 	//glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
 	//glPushMatrix();
 	glLoadIdentity();
-	glEnable( GL_LIGHT0 );  
+	//glEnable( GL_LIGHT0 );  
 	//glTranslatef(0.0f,0.0f,-4.0f);//move forward 4 units
 	glColor3f(0.0f,0.0f,1.0f); //blue color
 	glPointSize(10.0f);//set point size to 10 pixels
@@ -786,10 +786,11 @@ void SceneDrawer::Draw3DDepthMapTexture1()
 	XnPoint3D * m_PointCloudData = m_PointCloud->getPointCloudData();
 	for (unsigned int i=0; i<m_PointCloud->getPointCloudNum();i++)
 	{
+		glTexCoord2f(static_cast<float>(m_PointCloudData[i].X)/static_cast<float>(640), static_cast<float>(m_PointCloudData[i].Y)/static_cast<float>(480));
 		glVertex3f(m_PointCloudData[i].X, (yres-m_PointCloudData[i].Y), m_PointCloudData[i].Z);
 	}
 	glEnd();
-	glPopMatrix();
+	//glPopMatrix();
 	glDisable(GL_DEPTH_TEST);
 }
 
