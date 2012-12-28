@@ -1,135 +1,176 @@
-#include <XnCppWrapper.h>
-#include <stdio.h>
-using namespace xn;
-/** 
-* use  1.create object 2.set output mode 3.initilization 4.update and processing 
-* ex.. 1.DepthmapPointCloud cloud; 2.cloud.setOutputMode(getDefaultOutputMode()); 3.cloud.init(); 4. ... ;
-*/
-class DepthmapPointCloud	
+// Original code by Geoffrey Biggs, taken from the PCL tutorial in
+// http://pointclouds.org/documentation/tutorials/pcl_visualizer.php
+
+// Simple Kinect viewer that also allows to write the current scene to a .pcd
+// when pressing SPACE.
+
+#include <iostream>
+
+#include <pcl/io/openni_grabber.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/visualization/cloud_viewer.h>
+#include <pcl/console/parse.h>
+
+using namespace std;
+using namespace pcl;
+
+PointCloud<PointXYZRGBA>::Ptr cloudptr(new PointCloud<PointXYZRGBA>);
+PointCloud<PointXYZ>::Ptr fallbackCloud(new PointCloud<PointXYZ>);
+boost::shared_ptr<visualization::CloudViewer> viewer;
+Grabber* kinectGrabber;
+unsigned int filesSaved = 0;
+bool saveCloud(false), noColour(false);
+
+void
+printUsage(const char* programName)
 {
-public:
-	DepthmapPointCloud(Context &contex, DepthGenerator &depthGenerator)
-		: m_hContex(contex), m_hDepthGenerator(depthGenerator), m_nStatus(XN_STATUS_OK),
-			m_pProjecttiveCloud(0), m_pRealworldCloud(0) {}	
-	~DepthmapPointCloud()
-	{
-		stop();
-	}
-	void init();
-	void stop();
-	void setOutputMode(const XnMapOutputMode &outputMode);
-	void updataPointCloud();		// updata the point cloud datas	
-	inline XnPoint3D* getPointCloudData()
-	{
-		return m_pRealworldCloud;
-	}
-	inline const XnUInt32 getPointCloudNum() const
-	{
-		return m_nOutputMode.nXRes*m_nOutputMode.nYRes;
-	}
-	inline const XnMapOutputMode& getXYRes() const 
-	{
-		return m_nOutputMode;
-	}
-	inline const XnMapOutputMode getDefaultOutputMode()
-	{
-		// set the depth map output mode
-		XnMapOutputMode outputMode = {XN_VGA_X_RES, XN_VGA_Y_RES, 30};
-		return outputMode;
-	}
-	/** 
-	* test: return projective point cloud data
-	*/
-	inline XnPoint3D* getRawPointData()
-	{
-		return m_pProjecttiveCloud;
-	}
-	/** 
-	* test: get field of view
-	*/
-	inline void getFieldofView(XnFieldOfView &FOV)const
-	{
-		m_hDepthGenerator.GetFieldOfView(FOV);
-	}
-
-private:
-	Context &m_hContex;
-	DepthGenerator &m_hDepthGenerator;
-	XnStatus m_nStatus;
-	XnMapOutputMode m_nOutputMode;
-	XnPoint3D *m_pProjecttiveCloud;
-	XnPoint3D *m_pRealworldCloud;
-
-	inline void printError()
-	{
-		if (m_nStatus != XN_STATUS_OK)
-		{
-			printf("Error: %s", xnGetStatusString(m_nStatus));
-			exit(-1);
-		}
-	}
-	DepthmapPointCloud(const DepthmapPointCloud &rhs);	// don't define copy constructor
-	DepthmapPointCloud& operator=(const DepthmapPointCloud &rhs); // don't define assignment operator
-};
-
-void DepthmapPointCloud::setOutputMode(const XnMapOutputMode &outputMode)
-{
-	m_nOutputMode.nFPS = outputMode.nFPS;
-	m_nOutputMode.nXRes= outputMode.nXRes;
-	m_nOutputMode.nYRes = outputMode.nYRes;
+    cout << "Usage: " << programName << " [options]"
+         << endl
+         << endl
+         << "Options:\n"
+         << endl
+         << "\t<none>     start capturing from a Kinect device.\n"
+         << "\t-v NAME    visualize the given .pcd file.\n"
+         << "\t-h         shows this help.\n";
 }
 
-void DepthmapPointCloud::init()
+void
+grabberCallback(const PointCloud<PointXYZRGBA>::ConstPtr& cloud)
 {
-	m_nStatus = m_hContex.Init();
-	printError();
-	m_nStatus = m_hDepthGenerator.Create(m_hContex);
-	printError();
-	// set output mode
-	m_nStatus = m_hDepthGenerator.SetMapOutputMode(m_nOutputMode);
-	printError();
-	// start generating
-	m_nStatus = m_hContex.StartGeneratingAll();
-	printError();
-	// allocate memory to projective point cloud and real world point cloud
-	m_pProjecttiveCloud = new XnPoint3D[getPointCloudNum()];
-	m_pRealworldCloud = new XnPoint3D[getPointCloudNum()];
+    if (! viewer->wasStopped())
+        viewer->showCloud(cloud);
+        
+    if (saveCloud)
+    {
+        stringstream stream;
+        stream << "inputCloud" << filesSaved << ".pcd";
+        string filename = stream.str();
+        if (io::savePCDFile(filename, *cloud, true) == 0)
+        {
+            filesSaved++;
+            cout << "Saved " << filename << "." << endl;
+        }
+        else PCL_ERROR("Problem saving %s.\n", filename.c_str());
+        
+        saveCloud = false;
+    }
 }
 
-void DepthmapPointCloud::stop()
+void
+keyboardEventOccurred(const visualization::KeyboardEvent& event,
+    void* nothing)
 {
-	m_hContex.Release();
-	delete [] m_pProjecttiveCloud;
-	delete [] m_pRealworldCloud;
+    if (event.getKeySym() == "space" && event.keyDown())
+        saveCloud = true;
 }
 
-void DepthmapPointCloud::updataPointCloud()
+boost::shared_ptr<visualization::CloudViewer>
+createViewer()
 {
-	try
-	{
-		// update to next frame data
-		m_nStatus = m_hContex.WaitOneUpdateAll(m_hDepthGenerator);
-		// printf("DataSize: %d\n", m_hDepthGenerator.GetDataSize());		// test
-		// store depthmap data to projective cloudpoint data
-		XnUInt32 index, shiftStep;
-		for (XnUInt32 row=0; row<m_nOutputMode.nYRes; ++row)
-		{
-			shiftStep = row*m_nOutputMode.nXRes;
-			for (XnUInt32 column=0; column<m_nOutputMode.nXRes; ++column)
-			{
-				index = shiftStep + column;
-				m_pProjecttiveCloud[index].X = (XnFloat)column;
-				m_pProjecttiveCloud[index].Y = (XnFloat)row;
-				m_pProjecttiveCloud[index].Z = m_hDepthGenerator.GetDepthMap()[index]*0.001f; // mm -> m
-			}
-		}
-		if (m_nStatus != XN_STATUS_OK) throw m_nStatus;
-		// convert projective pointcloud to real world pointcloud
-		m_hDepthGenerator.ConvertProjectiveToRealWorld(m_nOutputMode.nXRes*m_nOutputMode.nYRes, m_pProjecttiveCloud, m_pRealworldCloud);
-	}
-	catch (...)
-	{
-		printError();
-		stop();
-	}
+    boost::shared_ptr<visualization::CloudViewer> v
+        (new visualization::CloudViewer("3D Viewer"));
+    v->registerKeyboardCallback(keyboardEventOccurred);
+    
+    return(v);
 }
+
+int
+main(int argc, char** argv)
+{
+    if (console::find_argument(argc, argv, "-h") >= 0)
+    {
+        printUsage(argv[0]);
+        return 0;
+    }
+    
+    bool justVisualize(false);
+    string filename;
+    if (console::find_argument(argc, argv, "-v") >= 0)
+    {
+        if (argc != 3)
+        {
+            printUsage(argv[0]);
+            return 0;
+        }
+        
+        filename = argv[2];
+        justVisualize = true;
+    }
+    else if (argc != 1)
+    {
+        printUsage(argv[0]);
+        return 0;
+    }
+    
+    if (justVisualize)
+    {
+        try
+        {
+            io::loadPCDFile<PointXYZRGBA>(filename.c_str(), *cloudptr);
+        }
+        catch (PCLException e1)
+        {
+            try
+            {
+                io::loadPCDFile<PointXYZ>(filename.c_str(), *fallbackCloud);
+            }
+            catch (PCLException e2)
+            {
+                return -1;
+            }
+            
+            noColour = true;
+        }
+        
+        cout << "Loaded " << filename << "." << endl;
+        if (noColour)
+            cout << "This file has no RGBA colour information present." << endl;
+    }
+    else
+    {
+        kinectGrabber = new OpenNIGrabber();
+        if (kinectGrabber == 0)
+            return false;
+        boost::function<void (const PointCloud<PointXYZRGBA>::ConstPtr&)> f =
+            boost::bind(&grabberCallback, _1);
+        kinectGrabber->registerCallback(f);
+    }
+    
+    viewer = createViewer();
+    
+    if (justVisualize)
+    {
+        if (noColour)
+            viewer->showCloud(fallbackCloud);
+        else viewer->showCloud(cloudptr);
+    }
+    else kinectGrabber->start();
+    
+    while (! viewer->wasStopped())
+        boost::this_thread::sleep(boost::posix_time::seconds(1));
+    
+    if (! justVisualize)
+        kinectGrabber->stop();
+}
+
+CMakeLists.txt (you can use the original one, doesn't matter): 
+
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+
+project(kinect_PCL_viewer)
+
+find_package(PCL 1.2 REQUIRED)
+
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
+set(ROS_BUILD_TYPE Release)
+
+file(GLOB kinectpclviewer_SRC
+    "src/*.h"
+    "src/*.cpp"
+)
+add_executable(kinectPCLviewer ${kinectpclviewer_SRC})
+
+target_link_libraries (kinectPCLviewer ${PCL_LIBRARIES})

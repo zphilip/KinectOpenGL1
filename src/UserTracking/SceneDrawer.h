@@ -134,6 +134,13 @@ private:
 
 	void Depth3DMapTextureinitGL();
 	void Depth3DMeshinitGL();
+	static void TestinitGL();
+	static void Testdisplay();
+	static void Testreshape(GLsizei width, GLsizei height);
+	static void glPCLView();
+	static void glPCLReSizeGLScene(int Width, int Height);
+	void glPCLInitGL(int Width, int Height);
+	float RawDepthToMeters(int depthValue);
     /// @brief An internal callback which is called from inside DrawScene main loop to do the drawing.
     ///
     /// This method does the single frame update including both updating the user tracker and calling
@@ -150,6 +157,8 @@ private:
 	static void subwindow3_reshape (int width, int height);
 	static void subwindow1_mouse_motion(int x, int y) ;
 	static void subwindow1_mouse(int button, int state, int x, int y);
+	static void glPCLMousePress(int button, int state, int x, int y);
+	static void glPCLMouseMoved(int x, int y);
 
 #ifndef USE_GLES
     /// @brief An internal callback which is called from inside DrawScene main loop for background 
@@ -212,6 +221,39 @@ private:
 			norm[1] = crs[1] / len;
 			norm[2] = crs[2] / len;
 		}
+	}
+
+	// Do the projection from u,v,depth to X,Y,Z directly in an opengl matrix
+	// These numbers come from a combination of the ros kinect_node wiki, and
+	// nicolas burrus' posts.
+	void LoadVertexMatrix()
+	{
+		float fx = 594.21f;
+		float fy = 591.04f;
+		float a = -0.0030711f;
+		float b = 3.3309495f;
+		float cx = 339.5f;
+		float cy = 242.7f;
+		GLfloat mat[16] = {
+			1/fx,     0,  0, 0,
+			0,    -1/fy,  0, 0,
+			0,       0,  0, a,
+			-cx/fx, cy/fy, -1, b
+		};
+		glMultMatrixf(mat);
+	}
+
+	// This matrix comes from a combination of nicolas burrus's calibration post
+	// and some python code I haven't documented yet.
+	void LoadRGBMatrix()
+	{
+		float mat[16] = {
+			5.34866271e+02,   3.89654806e+00,   0.00000000e+00,   1.74704200e-02,
+			-4.70724694e+00,  -5.28843603e+02,   0.00000000e+00,  -1.22753400e-02,
+			-3.19670762e+02,  -2.60999685e+02,   0.00000000e+00,  -9.99772000e-01,
+			-6.98445586e+00,   3.31139785e+00,   0.00000000e+00,   1.09167360e-02
+		};
+		glMultMatrixf(mat);
 	}
 
 	int getMaxDepth(const XnDepthPixel* depthmap, int size=640*480) {

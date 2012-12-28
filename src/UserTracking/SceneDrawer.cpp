@@ -1,4 +1,4 @@
-/****************************************************************************
+ï»¿/****************************************************************************
 *                                                                           *
 *  OpenNI 1.x Alpha                                                         *
 *  Copyright (C) 2011 PrimeSense Ltd.                                       *
@@ -492,10 +492,12 @@ void SceneDrawer::subwindow1_display (void)
 {
 	glPushMatrix();
 	SceneDrawer *singleton=GetInstance();
-    //if(singleton->g_bPause==FALSE)
-    //   singleton->m_pUserTrackerObj->UpdateFrame();
-	//singleton->Draw3DDepthMapTexture1();
-	singleton->Draw3DMesh();
+    if(singleton->g_bPause==FALSE)
+       singleton->m_pUserTrackerObj->UpdateFrame();
+	singleton->Draw3DDepthMapTexture1();
+	//TestRenderHUD();
+	//Testdisplay();
+	//singleton->Draw3DMesh();
 	glPopMatrix();
 	glutSwapBuffers();
 }
@@ -740,6 +742,126 @@ void SceneDrawer::Draw3DDepthMapTexture()
 }
 
 
+/* Initialize OpenGL Graphics */
+void SceneDrawer::TestinitGL() {
+   glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
+   glClearDepth(1.0f);                   // Set background depth to farthest
+   glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
+   glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
+   glShadeModel(GL_SMOOTH);   // Enable smooth shading
+   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
+}
+ 
+/* Handler for window re-size event. Called back when the window first appears and
+   whenever the window is re-sized with its new width and height */
+void SceneDrawer::Testreshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integer
+   // Compute aspect ratio of the new window
+   if (height == 0) height = 1;                // To prevent divide by 0
+   GLfloat aspect = (GLfloat)width / (GLfloat)height;
+ 
+   // Set the viewport to cover the new window
+   glViewport(0, 0, width, height);
+ 
+   // Set the aspect ratio of the clipping volume to match the viewport
+   glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
+   glLoadIdentity();             // Reset
+   // Enable perspective projection with fovy, aspect, zNear and zFar
+   gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+}
+/* Handler for window-repaint event. Called back when the window first appears and
+   whenever the window needs to be re-painted. */
+void SceneDrawer::Testdisplay()
+{
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+   glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
+   // Render a color-cube consisting of 6 quads with different colors
+   glLoadIdentity();                 // Reset the model-view matrix
+   glTranslatef(1.5f, 0.0f, -7.0f);  // Move right and into the screen
+   
+   glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
+      // Top face (y = 1.0f)
+      // Define vertices in counter-clockwise (CCW) order with normal pointing out
+      glColor3f(0.0f, 1.0f, 0.0f);     // Green
+      glVertex3f( 1.0f, 1.0f, -1.0f);
+      glVertex3f(-1.0f, 1.0f, -1.0f);
+      glVertex3f(-1.0f, 1.0f,  1.0f);
+      glVertex3f( 1.0f, 1.0f,  1.0f);
+ 
+      // Bottom face (y = -1.0f)
+      glColor3f(1.0f, 0.5f, 0.0f);     // Orange
+      glVertex3f( 1.0f, -1.0f,  1.0f);
+      glVertex3f(-1.0f, -1.0f,  1.0f);
+      glVertex3f(-1.0f, -1.0f, -1.0f);
+      glVertex3f( 1.0f, -1.0f, -1.0f);
+ 
+      // Front face  (z = 1.0f)
+      glColor3f(1.0f, 0.0f, 0.0f);     // Red
+      glVertex3f( 1.0f,  1.0f, 1.0f);
+      glVertex3f(-1.0f,  1.0f, 1.0f);
+      glVertex3f(-1.0f, -1.0f, 1.0f);
+      glVertex3f( 1.0f, -1.0f, 1.0f);
+ 
+      // Back face (z = -1.0f)
+      glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
+      glVertex3f( 1.0f, -1.0f, -1.0f);
+      glVertex3f(-1.0f, -1.0f, -1.0f);
+      glVertex3f(-1.0f,  1.0f, -1.0f);
+      glVertex3f( 1.0f,  1.0f, -1.0f);
+ 
+      // Left face (x = -1.0f)
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f(-1.0f,  1.0f,  1.0f);
+      glVertex3f(-1.0f,  1.0f, -1.0f);
+      glVertex3f(-1.0f, -1.0f, -1.0f);
+      glVertex3f(-1.0f, -1.0f,  1.0f);
+ 
+      // Right face (x = 1.0f)
+      glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
+      glVertex3f(1.0f,  1.0f, -1.0f);
+      glVertex3f(1.0f,  1.0f,  1.0f);
+      glVertex3f(1.0f, -1.0f,  1.0f);
+      glVertex3f(1.0f, -1.0f, -1.0f);
+   glEnd();  // End of drawing color-cube
+ 
+   // Render a pyramid consists of 4 triangles
+   glLoadIdentity();                  // Reset the model-view matrix
+   glTranslatef(-1.5f, 0.0f, -6.0f);  // Move left and into the screen
+ 
+   glBegin(GL_TRIANGLES);           // Begin drawing the pyramid with 4 triangles
+      // Front
+      glColor3f(1.0f, 0.0f, 0.0f);     // Red
+      glVertex3f( 0.0f, 1.0f, 0.0f);
+      glColor3f(0.0f, 1.0f, 0.0f);     // Green
+      glVertex3f(-1.0f, -1.0f, 1.0f);
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f(1.0f, -1.0f, 1.0f);
+ 
+      // Right
+      glColor3f(1.0f, 0.0f, 0.0f);     // Red
+      glVertex3f(0.0f, 1.0f, 0.0f);
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f(1.0f, -1.0f, 1.0f);
+      glColor3f(0.0f, 1.0f, 0.0f);     // Green
+      glVertex3f(1.0f, -1.0f, -1.0f);
+ 
+      // Back
+      glColor3f(1.0f, 0.0f, 0.0f);     // Red
+      glVertex3f(0.0f, 1.0f, 0.0f);
+      glColor3f(0.0f, 1.0f, 0.0f);     // Green
+      glVertex3f(1.0f, -1.0f, -1.0f);
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f(-1.0f, -1.0f, -1.0f);
+ 
+      // Left
+      glColor3f(1.0f,0.0f,0.0f);       // Red
+      glVertex3f( 0.0f, 1.0f, 0.0f);
+      glColor3f(0.0f,0.0f,1.0f);       // Blue
+      glVertex3f(-1.0f,-1.0f,-1.0f);
+      glColor3f(0.0f,1.0f,0.0f);       // Green
+      glVertex3f(-1.0f,-1.0f, 1.0f);
+   glEnd();   // Done drawing the pyramid
+}
+
 void SceneDrawer::Draw3DDepthMapTexture1() 
 {
 	xn::DepthGenerator *depth = NULL;
@@ -756,52 +878,147 @@ void SceneDrawer::Draw3DDepthMapTexture1()
 
 	if(maxdepth==-1)
 		maxdepth = depth->GetDeviceMaxDepth();
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
-	//glMatrixMode( GL_PROJECTION );
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
-	//glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
-	//glPushMatrix();
-	glLoadIdentity();
-	//glEnable( GL_LIGHT0 );  
-	//glTranslatef(0.0f,0.0f,-4.0f);//move forward 4 units
-	glColor3f(0.0f,0.0f,1.0f); //blue color
-	glPointSize(10.0f);//set point size to 10 pixels
-	//-------------------------------------------------
-	glBegin(GL_POINTS);
-	glVertex3f(1.0f,1.0f,0.0f);//upper-right corner
-    glVertex3f(-1.0f,-1.0f,0.0f);//lower-left corner
-	/*
-	for(unsigned int y=0; y<yres; y++) {
-		for(unsigned int x=0; x<xres; x++) {
-				//glTexCoord2f(static_cast<float>(x)/static_cast<float>(640), static_cast<float>(y)/static_cast<float>(480));
-				int offset = x+y*yres;
-				// Convert kinect data to world xyz coordinate
-				unsigned short rawDepth = tmpGrayPixels[offset];
-				Vector3f v = m_Kinect->DepthToWorld(x,y,rawDepth);
-				float rx = v.x();
-				float ry = v.y();
-				float rz = v.z();
-				//glVertex3f(rx, (yres-ry), rz);
-				glVertex3f(x, (yres-y), rawDepth);
-		}
-	}*/
+
+
 	DepthmapPointCloud *m_PointCloud = m_Kinect->getDepthPointCloud();
 	XnPoint3D * m_PointCloudData = m_PointCloud->getPointCloudData();
 	for (unsigned int i=0; i<m_PointCloud->getPointCloudNum();i++)
 	{
-		glTexCoord2f(static_cast<float>(m_PointCloudData[i].X)/static_cast<float>(640), static_cast<float>(m_PointCloudData[i].Y)/static_cast<float>(480));
-		glVertex3f(m_PointCloudData[i].X, (yres-m_PointCloudData[i].Y), m_PointCloudData[i].Z);
+		//glTexCoord2f(static_cast<float>(m_PointCloudData[i].X)/static_cast<float>(640), static_cast<float>(m_PointCloudData[i].Y)/static_cast<float>(480));
+		glVertex3f(m_PointCloudData[i].X/640, (yres-m_PointCloudData[i].Y)/480, m_PointCloudData[i].Z);
 	}
 	glEnd();
 	//glPopMatrix();
 	glDisable(GL_DEPTH_TEST);
 }
 
-// »­Ïñ¤Îºá·ù£¨…gÎ»¤ÏOpenGL¤Ë¤ª¤±¤ëéL¤µ£©
+GLuint gl_rgb_tex;
+int mx=-1,my=-1;        // Prevous mouse coordinates
+int rotangles[2] = {0}; // Panning angles
+float zoom = 4;         // zoom factor
+int color = 0;          // Use the RGB texture or just draw it as color
+
+float SceneDrawer::RawDepthToMeters(int depthValue)
+{
+	const float k1 = 1.1863;
+    const float k2 = 2842.5;
+    const float k3 = 0.1236;
+	if (depthValue < 2047)
+    {
+		return (k3 * tanf(depthValue/k2 + k1));
+	}
+	return 0.0f;
+}
+
+
+void SceneDrawer::glPCLMouseMoved(int x, int y)
+{
+    if (mx>=0 && my>=0) {
+        rotangles[0] += y-my;
+        rotangles[1] += x-mx;
+    }
+    mx = x;
+    my = y;
+}
+
+void SceneDrawer::glPCLMousePress(int button, int state, int x, int y)
+{
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        mx = x;
+        my = y;
+    }
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+        mx = -1;
+        my = -1;
+    }
+}
+void SceneDrawer::glPCLView()
+{
+    short *depth = 0;
+    char *rgb = 0;
+	SceneDrawer *singleton=GetInstance();
+	KinectDevice *m_Kinect = singleton->m_KinectApp->GetKinectDevice(0);    
+	xn::DepthMetaData *pDepthMapMD = m_Kinect->getDepthMetaData();
+	xn::ImageMetaData *pImageMapMD = m_Kinect->getImageMetaData();
+	unsigned short *tmpGrayPixels = (unsigned short *)pDepthMapMD->Data();
+
+    static unsigned int indices[480][640];
+    static short xyz[480][640][3];
+    int i,j;
+    for (i = 0; i < 480; i++) {
+        for (j = 0; j < 640; j++) {
+            xyz[i][j][0] = j;
+            xyz[i][j][1] = i;
+            //xyz[i][j][2] = singleton->RawDepthToMeters(tmpGrayPixels[i*640+j]);
+			xyz[i][j][2] = tmpGrayPixels[i*640+j];
+            indices[i][j] = i*640+j;
+        }
+    }
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+
+    glPushMatrix();
+    glScalef(zoom,zoom,1);
+    glTranslatef(0,0,-3.5);
+    glRotatef(rotangles[0], 1,0,0);
+    glRotatef(rotangles[1], 0,1,0);
+    glTranslatef(0,0,1.5);
+
+    singleton->LoadVertexMatrix();
+
+    // Set the projection from the XYZ to the texture image
+    glMatrixMode(GL_TEXTURE);
+    glLoadIdentity();
+    glScalef(1/640.0f,1/480.0f,1);
+    singleton->LoadRGBMatrix();
+    singleton->LoadVertexMatrix();
+    glMatrixMode(GL_MODELVIEW);
+
+    glPointSize(1);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_SHORT, 0, xyz);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(3, GL_SHORT, 0, xyz);
+
+    if (0)
+        glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, gl_rgb_tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, m_Kinect->getKinectColorBufferData());
+
+    glPointSize(1.0f);
+    glDrawElements(GL_POINTS, 640*480, GL_UNSIGNED_INT, indices);
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
+    glutSwapBuffers();
+
+}
+
+void SceneDrawer::glPCLReSizeGLScene(int Width, int Height)
+{
+    glViewport(0,0,Width,Height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(60, 4/3., 0.3, 200);
+    glMatrixMode(GL_MODELVIEW);
+}
+
+void SceneDrawer::glPCLInitGL(int Width, int Height)
+{
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glEnable(GL_DEPTH_TEST);
+    glGenTextures(1, &gl_rgb_tex);
+    glBindTexture(GL_TEXTURE_2D, gl_rgb_tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glPCLReSizeGLScene(Width, Height);
+}
+
+// ç”»åƒã®æ¨ªå¹…ï¼ˆå˜ä½ã¯OpenGLã«ãŠã‘ã‚‹é•·ã•ï¼‰
 #define PLANE_SIZE 5.0
 
-// ¥İ¥ê¥´¥ó¤¬¿¤¬¤Ã¤Æ¤¤¤Ê¤¤¤ÈÅĞ¶Ï¤¹¤ëé“‚£¨…gÎ»¤ÏOpenGL¤Ë¤ª¤±¤ëéL¤µ£©
+// ãƒãƒªã‚´ãƒ³ãŒç¹‹ãŒã£ã¦ã„ãªã„ã¨åˆ¤æ–­ã™ã‚‹é–¾å€¤ï¼ˆå˜ä½ã¯OpenGLã«ãŠã‘ã‚‹é•·ã•ï¼‰
 #define SPLIT_THRESHOLD		0.5
 
 #define MAX_DEPTH 10000
@@ -810,15 +1027,15 @@ XnRGB24Pixel* g_pTexMap = NULL;
 unsigned int g_nTexMapX = 0;
 unsigned int g_nTexMapY = 0;
 
-float* g_pVertices3f = NULL;			// í”µã¥Ğ¥Ã¥Õ¥¡
-float* g_pNormals3f = NULL;				// ·¨¾€¥Ğ¥Ã¥Õ¥¡
+float* g_pVertices3f = NULL;			// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡
+float* g_pNormals3f = NULL;				// æ³•ç·šãƒãƒƒãƒ•ã‚¡
 
-// ¡ı·Ö¸îÊı¡£¤³¤ì¤òĞ¡¤µ¤¯¤¹¤ë¤È±íÊ¾¤¬»Ä¤¯¡¢´ó¤­¤¯¤¹¤ë¤È¼š¤«¤¯¤Ê¤ë
-unsigned int g_nPolyX = 160; //640;		// ºá·½Ïò¤Î¸ñ×ÓÊı
-unsigned int g_nPolyY = 120; //480;		// ¿k·½Ïò¤Î¸ñ×ÓÊı
+// â†“åˆ†å‰²æ•°ã€‚ã“ã‚Œã‚’å°ã•ãã™ã‚‹ã¨è¡¨ç¤ºãŒè’ãã€å¤§ããã™ã‚‹ã¨ç´°ã‹ããªã‚‹
+unsigned int g_nPolyX = 160; //640;		// æ¨ªæ–¹å‘ã®æ ¼å­æ•°
+unsigned int g_nPolyY = 120; //480;		// ç¸¦æ–¹å‘ã®æ ¼å­æ•°
 
-float gRotateMat[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };	// ¥«¥á¥é»ØÜĞĞÁĞ
-float gPanVec[]      = { 0.0, 0.0, 0.0 };						// ¥«¥á¥éÆ½ĞĞÒÆ„ÓÁ¿
+float gRotateMat[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };	// ã‚«ãƒ¡ãƒ©å›è»¢è¡Œåˆ—
+float gPanVec[]      = { 0.0, 0.0, 0.0 };						// ã‚«ãƒ¡ãƒ©å¹³è¡Œç§»å‹•é‡
 
 void SceneDrawer::Depth3DMeshInit(void)
 {
@@ -826,14 +1043,14 @@ void SceneDrawer::Depth3DMeshInit(void)
 	xn::DepthMetaData *g_depthMD = m_Kinect->getDepthMetaData();
 	xn::ImageMetaData *g_imageMD = m_Kinect->getImageMetaData();
 	
-	// ¥Ç¥×¥¹¥Ş¥Ã¥×¤ò¥«¥á¥é»­Ïñ¤ËÎ»ÖÃºÏ¤ï¤»
+	// ãƒ‡ãƒ—ã‚¹ãƒãƒƒãƒ—ã‚’ã‚«ãƒ¡ãƒ©ç”»åƒã«ä½ç½®åˆã‚ã›
 	m_Kinect->getDepthGenerator()->GetAlternativeViewPointCap().SetViewPoint(*m_Kinect->getImageGenerator());
 	// Texture map init
 	g_nTexMapX = (((unsigned short)(g_depthMD->FullXRes()-1) / 512) + 1) * 512;
 	g_nTexMapY = (((unsigned short)(g_depthMD->FullYRes()-1) / 512) + 1) * 512;
 	g_pTexMap = (XnRGB24Pixel*)malloc(g_nTexMapX * g_nTexMapY * sizeof(XnRGB24Pixel));
 
-	// í”µã¥Ğ¥Ã¥Õ¥¡´_±£
+	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ç¢ºä¿
 	g_pVertices3f = (float*)calloc(g_nPolyX * g_nPolyY * 3, sizeof(float));
 
 	return;
@@ -866,10 +1083,10 @@ void SceneDrawer::Depth3DMeshReshape(int width, int height)
 }
 
 //---------------------------------------------------------------------------
-// Ãè»­„IÀí
+// æç”»å‡¦ç†
 
-// OpenGL¤ÎÃè»­„IÀí¤ò¤³¤³¤Ë•ø¤¯¡£
-//   gluing.h ¤«¤éºô¤Ğ¤ì¤Ş¤¹
+// OpenGLã®æç”»å‡¦ç†ã‚’ã“ã“ã«æ›¸ãã€‚
+//   gluing.h ã‹ã‚‰å‘¼ã°ã‚Œã¾ã™
 void SceneDrawer::Draw3DMesh (void)
 {
 	//gluPerspective(45, subwindow1_w/subwindow1_h, 1000, 5000);
@@ -931,7 +1148,7 @@ void SceneDrawer::Draw3DMesh (void)
 		pTexRow += g_nTexMapX;
 	}
 
-	// í”µã×ù˜Ë³õÆÚ»¯
+	// é ‚ç‚¹åº§æ¨™åˆæœŸåŒ–
 	for (unsigned int y = 0; y < g_nPolyY; ++y)
 	{
 		for (unsigned int x = 0; x < g_nPolyX; ++x)
@@ -943,7 +1160,7 @@ void SceneDrawer::Draw3DMesh (void)
 		}
 	}
 
-	// Œê¤¹¤ë¥İ¥ê¥´¥óš°¤ÎÉî¶È¤ÎÆ½¾ù¤òÇó¤á¤ë¡£í”µã¥Ğ¥Ã¥Õ¥¡¤òÒ»•rµÄ¤Ë×÷˜IîIÓò¤ËÊ¹¤Ã¤Æ¤¤¤ë
+	// å¯¾å¿œã™ã‚‹ãƒãƒªã‚´ãƒ³æ¯ã®æ·±åº¦ã®å¹³å‡ã‚’æ±‚ã‚ã‚‹ã€‚é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ä¸€æ™‚çš„ã«ä½œæ¥­é ˜åŸŸã«ä½¿ã£ã¦ã„ã‚‹
 	int px, py;
 	const XnDepthPixel* pDepthRow = g_depthMD->Data();
 	//XnRGB24Pixel* 
@@ -962,15 +1179,15 @@ void SceneDrawer::Draw3DMesh (void)
 		{
 			px = (x + g_depthMD->XOffset()) * g_nPolyX / nXRes;
 
-			if (*pDepth != 0)	// Éî¶È0¤È¤Ê¤Ã¤Æ¤¤¤ë»­ËØ¤ÏÆ½¾ù‚¤ÎÓ‹Ëã¤«¤é³ı¤¯
+			if (*pDepth != 0)	// æ·±åº¦0ã¨ãªã£ã¦ã„ã‚‹ç”»ç´ ã¯å¹³å‡å€¤ã®è¨ˆç®—ã‹ã‚‰é™¤ã
 			{
 				int nHistValue = g_pDepthHist[*pDepth];
 
-				// Z‚¤Î¼¯Ó‹
-				g_pVertices3f[(py * g_nPolyX + px) * 3 + 2] +=  (float)nHistValue;	// í”µã¥Ù¥¯¥È¥ë¤ÎµÚ3ÒªËØ¤ËÈë¤ì¤Æ¤ª¤¯£¨¥Û¥ó¥È¤Ï‚¤¬ß`¤¦¤±¤É£©
+				// Zå€¤ã®é›†è¨ˆ
+				g_pVertices3f[(py * g_nPolyX + px) * 3 + 2] +=  (float)nHistValue;	// é ‚ç‚¹ãƒ™ã‚¯ãƒˆãƒ«ã®ç¬¬3è¦ç´ ã«å…¥ã‚Œã¦ãŠãï¼ˆãƒ›ãƒ³ãƒˆã¯å€¤ãŒé•ã†ã‘ã©ï¼‰
 
-				// Ãæ·e¤Î¼¯Ó‹
-				g_pVertices3f[(py * g_nPolyX + px) * 3] += 1.0;		// í”µã¥Ù¥¯¥È¥ë¤ÎµÚ1ÒªËØ¤ËÈë¤ì¤Æ¤ª¤¯£¨¥Û¥ó¥È¤ÏÓÃÍ¾¤¬ß`¤¦¤±¤É£©
+				// é¢ç©ã®é›†è¨ˆ
+				g_pVertices3f[(py * g_nPolyX + px) * 3] += 1.0;		// é ‚ç‚¹ãƒ™ã‚¯ãƒˆãƒ«ã®ç¬¬1è¦ç´ ã«å…¥ã‚Œã¦ãŠãï¼ˆãƒ›ãƒ³ãƒˆã¯ç”¨é€”ãŒé•ã†ã‘ã©ï¼‰
 			}
 		}
 
@@ -978,7 +1195,7 @@ void SceneDrawer::Draw3DMesh (void)
 		pTexRow += g_nTexMapX;
 	}
 
-	// í”µã×ù˜Ë¤òÓ‹Ëã
+	// é ‚ç‚¹åº§æ¨™ã‚’è¨ˆç®—
 	float dx = (float)PLANE_SIZE / (float)g_nPolyX;
 	float dy = (float)PLANE_SIZE * (float)nYRes / (float)nXRes / (float)g_nPolyY;
 	float xoffset = -(float)(PLANE_SIZE / 2);
@@ -991,16 +1208,16 @@ void SceneDrawer::Draw3DMesh (void)
 			int index = (y * g_nPolyX + x) * 3;
 
 			if (g_pVertices3f[index] > 0.0) {
-				// °ÂĞĞ¤­Ó‹œyÃæ·e¥¼¥í¤Ç¤Ê¤±¤ì¤ĞZ×ù˜Ë¤òÓ‹Ëã
+				// å¥¥è¡Œãè¨ˆæ¸¬é¢ç©ã‚¼ãƒ­ã§ãªã‘ã‚Œã°Zåº§æ¨™ã‚’è¨ˆç®—
 				g_pVertices3f[index + 2] /= (g_pVertices3f[index] * (float)PLANE_SIZE);
 			} else {
-				// °ÂĞĞ¤­Ó‹œyÃæ·e¥¼¥í¤Ê¤é°ÂĞĞ¤­¥¼¥í¤È¤¹¤ë
+				// å¥¥è¡Œãè¨ˆæ¸¬é¢ç©ã‚¼ãƒ­ãªã‚‰å¥¥è¡Œãã‚¼ãƒ­ã¨ã™ã‚‹
 				g_pVertices3f[index + 2] = 0.0;
 			}
 
-			g_pVertices3f[index] = dx * (float)x + xoffset;			// X×ù˜Ë
-			g_pVertices3f[index + 1] = dy * -(float)y + yoffset;	// Y×ù˜Ë
-			g_pVertices3f[index + 2] = (g_pVertices3f[index + 2] / 5.0) + zoffset;	// Z×ù˜Ë¡£5.0¤Ç¸î¤Ã¤Æ¤¤¤ë¤Î¤Ïßmµ±¤Ê°¼Í¹¤ËÕ{¹¤¹¤ë¤¿¤á¡£
+			g_pVertices3f[index] = dx * (float)x + xoffset;			// Xåº§æ¨™
+			g_pVertices3f[index + 1] = dy * -(float)y + yoffset;	// Yåº§æ¨™
+			g_pVertices3f[index + 2] = (g_pVertices3f[index + 2] / 5.0) + zoffset;	// Zåº§æ¨™ã€‚5.0ã§å‰²ã£ã¦ã„ã‚‹ã®ã¯é©å½“ãªå‡¹å‡¸ã«èª¿ç¯€ã™ã‚‹ãŸã‚ã€‚
 		}
 	}
 	
@@ -1016,7 +1233,7 @@ void SceneDrawer::Draw3DMesh (void)
 	// Enable texture
 	glEnable(GL_TEXTURE_2D);
 
-	// °¼Í¹¤ò¸¶¤±¤ÆÃè»­
+	// å‡¹å‡¸ã‚’ä»˜ã‘ã¦æç”»
 	glBegin(GL_TRIANGLES);
 	float texWidth = (float)nXRes / (float)g_nTexMapX;
 	float texHeight = (float)nYRes / (float)g_nTexMapY;
@@ -1024,38 +1241,38 @@ void SceneDrawer::Draw3DMesh (void)
 	{
 		for (unsigned int x = 0; x < g_nPolyX - 1; ++x)
 		{
-			// Œê¤¹¤ë¥Æ¥¯¥¹¥Á¥ã¤Î×ù˜Ë
+			// å¯¾å¿œã™ã‚‹ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®åº§æ¨™
 			float tx0 = ((float)x) / (float)(g_nPolyX - 1) * texWidth;
 			float ty0 = ((float)y) / (float)(g_nPolyY - 1) * texHeight;
 			float tx1 = ((float)x + 1) / (float)(g_nPolyX - 1) * texWidth;
 			float ty1 = ((float)y + 1) / (float)(g_nPolyY - 1) * texHeight;
 
-			// ¥İ¥ê¥´¥ó¤Îí”µã
+			// ãƒãƒªã‚´ãƒ³ã®é ‚ç‚¹
 			float* pUL = g_pVertices3f + ((y * g_nPolyX + x) * 3);
 			float* pUR = pUL + 3;
 			float* pBR = pUL + (g_nPolyX * 3) + 3;
 			float* pBL = pUL + (g_nPolyX * 3);
 
-			// ·¨¾€¤òÇó¤á¤ë
+			// æ³•ç·šã‚’æ±‚ã‚ã‚‹
 			float norm[3];
 
-			// é“‚ÒÔÉÏëx¤ì¤Æ¤¤¤ë¥á¥Ã¥·¥å¤Î„IÀí
+			// é–¾å€¤ä»¥ä¸Šé›¢ã‚Œã¦ã„ã‚‹ãƒ¡ãƒƒã‚·ãƒ¥ã®å‡¦ç†
 			if (abs(pUR[2] - pUL[2]) > SPLIT_THRESHOLD || abs(pBR[2] - pBL[2]) > SPLIT_THRESHOLD
 				|| abs(pBL[2] - pUL[2]) > SPLIT_THRESHOLD || abs(pBR[2] - pUR[2]) > SPLIT_THRESHOLD) {
-// ¤Á¤ç¤Ã¤È¥È¥ê¥Ã¥­©`¤Ê•ø¤­·½¤À¤±¤É¡¢#if¤Î‚¤Ç±íÊ¾·½·¨¤Îßx’k¤¬¤Ç¤­¤ë
-// ¡ı 1¡­ëx¤ì¤¿¥İ¥ê¥´¥ó¤ÏÇĞ¤êëx¤¹£¬0¡­ÇĞ¤êëx¤µ¤ºÉ«¤ò‰ä¤¨¤ë
+// ã¡ã‚‡ã£ã¨ãƒˆãƒªãƒƒã‚­ãƒ¼ãªæ›¸ãæ–¹ã ã‘ã©ã€#ifã®å€¤ã§è¡¨ç¤ºæ–¹æ³•ã®é¸æŠãŒã§ãã‚‹
+// â†“ 1â€¦é›¢ã‚ŒãŸãƒãƒªã‚´ãƒ³ã¯åˆ‡ã‚Šé›¢ã™ï¼Œ0â€¦åˆ‡ã‚Šé›¢ã•ãšè‰²ã‚’å¤‰ãˆã‚‹
 #if 1
-					continue;					// Ãè»­¤·¤Ê¤¤¡£¤Ä¤Ş¤êëO¤Î¥İ¥ê¥´¥ó¤ÈÇĞ¤êëx¤¹
+					continue;					// æç”»ã—ãªã„ã€‚ã¤ã¾ã‚Šéš£ã®ãƒãƒªã‚´ãƒ³ã¨åˆ‡ã‚Šé›¢ã™
 #else
-					glColor3f(0.0, 1.0, 0.0);	// ÇĞ¤êëx¤µ¤º¾v¤Ë¤¹¤ë
+					glColor3f(0.0, 1.0, 0.0);	// åˆ‡ã‚Šé›¢ã•ãšç·‘ã«ã™ã‚‹
 			} else {
-					glColor3f(1.0, 1.0, 1.0);	// Í¨³£¤Ï¥Æ¥¯¥¹¥Á¥ã¤ÎÉ«¤Ë¤Ê¤ë¤è¤¦¡¢°×¤È¤¹¤ë
+					glColor3f(1.0, 1.0, 1.0);	// é€šå¸¸ã¯ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®è‰²ã«ãªã‚‹ã‚ˆã†ã€ç™½ã¨ã™ã‚‹
 #endif
 			}
 
-			// ËÄ½ÇĞÎ¤Î¸ñ×Ó¤ò•ø¤¯¤Ë¤ÏÈı½ÇĞÎ¤¬£²¤ÄÒª¤ë
+			// å››è§’å½¢ã®æ ¼å­ã‚’æ›¸ãã«ã¯ä¸‰è§’å½¢ãŒï¼’ã¤è¦ã‚‹
 
-			// Èı½ÇĞÎ¤½¤Î£±
+			// ä¸‰è§’å½¢ãã®ï¼‘
 			normal(pUL, pUR, pBR, norm);
 			glNormal3fv(norm);
 			// upper left
@@ -1068,7 +1285,7 @@ void SceneDrawer::Draw3DMesh (void)
 			glTexCoord2f(tx1, ty1);
 			glVertex3fv(pBR);
 
-			// Èı½ÇĞÎ¤½¤Î£²
+			// ä¸‰è§’å½¢ãã®ï¼’
 			normal(pBL, pUL, pBR, norm);
 			glNormal3fv(norm);
 			// bottom left
@@ -1094,13 +1311,14 @@ void SceneDrawer::glutIdle (void)
 		singleton->m_KinectApp->GetKinectDevice(0)->Update();
 	//glutSetWindow(KProgram::mWindowHandle);
     //glutPostRedisplay();
+	glutSetWindow(SceneDrawer::m_windowHandle);
+    glutPostRedisplay();
 	glutSetWindow(SceneDrawer::sub_windowHandle1);
     glutPostRedisplay();
 	glutSetWindow(SceneDrawer::sub_windowHandle2);
 	glutPostRedisplay();
 	glutSetWindow(SceneDrawer::sub_windowHandle3);
 	glutPostRedisplay();
-
 }
 
 
@@ -1193,7 +1411,8 @@ void SceneDrawer::Depth3DMapTextureinitGL()
 void SceneDrawer::glInit (int * pargc, char ** argv)
 {
 	glutInit(pargc, argv);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	//glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);
     glutInitWindowSize(GL_WIN_SIZE_X, GL_WIN_SIZE_Y);
 	glutInitWindowPosition(WINDOW_POS_X - GL_WIN_SIZE_X,WINDOW_POS_Y);
     m_windowHandle = glutCreateWindow ("User Selection Sample");
@@ -1201,16 +1420,19 @@ void SceneDrawer::glInit (int * pargc, char ** argv)
 	glutDisplayFunc(SceneDrawer::main_display);
 	
 	/**** Subwindow 1 *****/
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);
 	sub_windowHandle1 = glutCreateSubWindow (m_windowHandle, subwindow1_x, subwindow1_y, subwindow1_w, subwindow1_h);
-	Depth3DMeshinitGL();
-	glutDisplayFunc(SceneDrawer::subwindow1_display);
+	glutDisplayFunc(SceneDrawer::glPCLView);
 	//glutReshapeFunc(SceneDrawer::subwindow1_reshape);
-	glutReshapeFunc(SceneDrawer::Depth3DMeshReshape);		
+	//glutReshapeFunc(SceneDrawer::Depth3DMeshReshape);	
+	glutReshapeFunc(SceneDrawer::glPCLReSizeGLScene);		
     glutKeyboardFunc(SceneDrawer::glutKeyboard);
     glutIdleFunc(SceneDrawer::glutIdle);
-	glutMouseFunc(SceneDrawer::subwindow1_mouse);
-	glutMotionFunc(SceneDrawer::subwindow1_mouse_motion);
+	glutMouseFunc(SceneDrawer::glPCLMousePress);
+	glutMotionFunc(SceneDrawer::glPCLMouseMoved);
+	//Depth3DMeshinitGL();
+	//TestinitGL();
+	glPCLInitGL(640,480);
 
 	/**** Subwindow 3*****/
 	sub_windowHandle3 = glutCreateSubWindow (m_windowHandle, subwindow3_x, subwindow3_y, subwindow3_w, subwindow3_h);
@@ -1407,4 +1629,3 @@ void SceneDrawer::subwindow3_reshape (int width, int height)
 	printf ("Width: %d, Height: %d, Viewport Side: %d.\n", width, height, viewport_side);
 }
 #endif // USE_GLES
-
