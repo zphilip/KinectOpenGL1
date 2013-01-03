@@ -24,6 +24,7 @@
 //---------------------------------------------------------------------------
 #include "SceneDrawer.h"
 #include "KProgram.h"
+#include "glPointCould.h"
 //---------------------------------------------------------------------------
 // definitions
 //---------------------------------------------------------------------------
@@ -94,7 +95,7 @@ void SceneDrawer::DrawScene(UserTracker *pUserTrackerObj,int argc, char **argv,K
 	//KProgram::initGlut(argc, argv);
     glInit(&argc, argv);
 #endif
-	Depth3DMeshInit();
+	//Depth3DMeshInit();
     InitTexture();
 #ifndef USE_GLES
     glutMainLoop();
@@ -494,7 +495,11 @@ void SceneDrawer::subwindow1_display (void)
 	SceneDrawer *singleton=GetInstance();
     if(singleton->g_bPause==FALSE)
        singleton->m_pUserTrackerObj->UpdateFrame();
-	singleton->Draw3DDepthMapTexture1();
+	KinectDevice *m_Kinect = singleton->m_KinectApp->GetKinectDevice(0);    
+	xn::DepthMetaData *pDepthMapMD = m_Kinect->getDepthMetaData();
+	xn::ImageMetaData *pImageMapMD = m_Kinect->getImageMetaData();
+	glPointCloud::glPCLDraw((unsigned short *)pDepthMapMD->Data(), (unsigned short *)pImageMapMD->Data());
+	//singleton->Draw3DDepthMapTexture1();
 	//TestRenderHUD();
 	//Testdisplay();
 	//singleton->Draw3DMesh();
@@ -892,12 +897,6 @@ void SceneDrawer::Draw3DDepthMapTexture1()
 	glDisable(GL_DEPTH_TEST);
 }
 
-GLuint gl_rgb_tex;
-int mx=-1,my=-1;        // Prevous mouse coordinates
-int rotangles[2] = {0}; // Panning angles
-float zoom = 4;         // zoom factor
-int color = 0;          // Use the RGB texture or just draw it as color
-
 float SceneDrawer::RawDepthToMeters(int depthValue)
 {
 	const float k1 = 1.1863;
@@ -908,111 +907,6 @@ float SceneDrawer::RawDepthToMeters(int depthValue)
 		return (k3 * tanf(depthValue/k2 + k1));
 	}
 	return 0.0f;
-}
-
-
-void SceneDrawer::glPCLMouseMoved(int x, int y)
-{
-    if (mx>=0 && my>=0) {
-        rotangles[0] += y-my;
-        rotangles[1] += x-mx;
-    }
-    mx = x;
-    my = y;
-}
-
-void SceneDrawer::glPCLMousePress(int button, int state, int x, int y)
-{
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-        mx = x;
-        my = y;
-    }
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-        mx = -1;
-        my = -1;
-    }
-}
-void SceneDrawer::glPCLView()
-{
-    short *depth = 0;
-    char *rgb = 0;
-	SceneDrawer *singleton=GetInstance();
-	KinectDevice *m_Kinect = singleton->m_KinectApp->GetKinectDevice(0);    
-	xn::DepthMetaData *pDepthMapMD = m_Kinect->getDepthMetaData();
-	xn::ImageMetaData *pImageMapMD = m_Kinect->getImageMetaData();
-	unsigned short *tmpGrayPixels = (unsigned short *)pDepthMapMD->Data();
-
-    static unsigned int indices[480][640];
-    static short xyz[480][640][3];
-    int i,j;
-    for (i = 0; i < 480; i++) {
-        for (j = 0; j < 640; j++) {
-            xyz[i][j][0] = j;
-            xyz[i][j][1] = i;
-            //xyz[i][j][2] = singleton->RawDepthToMeters(tmpGrayPixels[i*640+j]);
-			xyz[i][j][2] = tmpGrayPixels[i*640+j];
-            indices[i][j] = i*640+j;
-        }
-    }
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-
-    glPushMatrix();
-    glScalef(zoom,zoom,1);
-    glTranslatef(0,0,-3.5);
-    glRotatef(rotangles[0], 1,0,0);
-    glRotatef(rotangles[1], 0,1,0);
-    glTranslatef(0,0,1.5);
-
-    singleton->LoadVertexMatrix();
-
-    // Set the projection from the XYZ to the texture image
-    glMatrixMode(GL_TEXTURE);
-    glLoadIdentity();
-    glScalef(1/640.0f,1/480.0f,1);
-    singleton->LoadRGBMatrix();
-    singleton->LoadVertexMatrix();
-    glMatrixMode(GL_MODELVIEW);
-
-    glPointSize(1);
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_SHORT, 0, xyz);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(3, GL_SHORT, 0, xyz);
-
-    if (0)
-        glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, gl_rgb_tex);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, m_Kinect->getKinectColorBufferData());
-
-    glPointSize(1.0f);
-    glDrawElements(GL_POINTS, 640*480, GL_UNSIGNED_INT, indices);
-    glPopMatrix();
-    glDisable(GL_TEXTURE_2D);
-    glutSwapBuffers();
-
-}
-
-void SceneDrawer::glPCLReSizeGLScene(int Width, int Height)
-{
-    glViewport(0,0,Width,Height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(60, 4/3., 0.3, 200);
-    glMatrixMode(GL_MODELVIEW);
-}
-
-void SceneDrawer::glPCLInitGL(int Width, int Height)
-{
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glEnable(GL_DEPTH_TEST);
-    glGenTextures(1, &gl_rgb_tex);
-    glBindTexture(GL_TEXTURE_2D, gl_rgb_tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glPCLReSizeGLScene(Width, Height);
 }
 
 // 画像の横幅（単位はOpenGLにおける長さ）
@@ -1422,17 +1316,17 @@ void SceneDrawer::glInit (int * pargc, char ** argv)
 	/**** Subwindow 1 *****/
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);
 	sub_windowHandle1 = glutCreateSubWindow (m_windowHandle, subwindow1_x, subwindow1_y, subwindow1_w, subwindow1_h);
-	glutDisplayFunc(SceneDrawer::glPCLView);
+	glutDisplayFunc(SceneDrawer::subwindow1_display);
 	//glutReshapeFunc(SceneDrawer::subwindow1_reshape);
 	//glutReshapeFunc(SceneDrawer::Depth3DMeshReshape);	
-	glutReshapeFunc(SceneDrawer::glPCLReSizeGLScene);		
-    glutKeyboardFunc(SceneDrawer::glutKeyboard);
     glutIdleFunc(SceneDrawer::glutIdle);
-	glutMouseFunc(SceneDrawer::glPCLMousePress);
-	glutMotionFunc(SceneDrawer::glPCLMouseMoved);
+    glutKeyboardFunc(glPointCloud::glKeyPressed);
+	glutReshapeFunc(glPointCloud::glPCLReSizeGLScene);		
+	glutMouseFunc(glPointCloud::glPCLMousePress);
+	glutMotionFunc(glPointCloud::glPCLMouseMoved);
 	//Depth3DMeshinitGL();
 	//TestinitGL();
-	glPCLInitGL(640,480);
+	glPointCloud::glPCLInitGL(640,480);
 
 	/**** Subwindow 3*****/
 	sub_windowHandle3 = glutCreateSubWindow (m_windowHandle, subwindow3_x, subwindow3_y, subwindow3_w, subwindow3_h);

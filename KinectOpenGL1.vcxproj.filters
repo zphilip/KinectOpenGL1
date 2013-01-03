@@ -19,6 +19,9 @@
     <Filter Include="src\vmmlib">
       <UniqueIdentifier>{a7372b56-7735-44b0-bbea-e487a4e6a593}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\KinectPointCloud">
+      <UniqueIdentifier>{b706248b-68f9-4785-ad90-16f4e73dacb9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\KinectDevice\KinectDevice.cpp">
@@ -43,9 +46,6 @@
       <Filter>src\UserTracking</Filter>
     </ClCompile>
     <ClCompile Include="src\UserTracking\PoseUserSelector.cpp">
-      <Filter>src\UserTracking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UserTracking\SceneDrawer.cpp">
       <Filter>src\UserTracking</Filter>
     </ClCompile>
     <ClCompile Include="src\UserTracking\SinglePoseUserSelector.cpp">
@@ -93,6 +93,12 @@
     <ClCompile Include="src\UserTracking\KinectAppManager.cpp">
       <Filter>src\UserTracking</Filter>
     </ClCompile>
+    <ClCompile Include="src\SceneDrawer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KinectPointCloud\KinectPCL.cpp">
+      <Filter>src\KinectPointCloud</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\KinectDevice\KinectDevice.h">
@@ -120,9 +126,6 @@
       <Filter>src\UserTracking</Filter>
     </ClInclude>
     <ClInclude Include="src\UserTracking\PoseUserSelector.h">
-      <Filter>src\UserTracking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\UserTracking\SceneDrawer.h">
       <Filter>src\UserTracking</Filter>
     </ClInclude>
     <ClInclude Include="src\UserTracking\SinglePoseUserSelector.h">
@@ -305,8 +308,14 @@
     <ClInclude Include="src\UserTracking\KinectAppManager.h">
       <Filter>src\UserTracking</Filter>
     </ClInclude>
-    <ClInclude Include="src\KinectDevice\KinectPCL.h">
-      <Filter>src\KinectDevice</Filter>
+    <ClInclude Include="src\SceneDrawer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectPointCloud\KinectPCL.h">
+      <Filter>src\KinectPointCloud</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KinectPointCloud\glPointCould.h">
+      <Filter>src\KinectPointCloud</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

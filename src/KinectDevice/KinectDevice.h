@@ -14,8 +14,6 @@
 #include <vmmlib/math.hpp>
 #include "KinectPCL.h"
 
-using namespace vmml;
-
 namespace Kinect
 {
 

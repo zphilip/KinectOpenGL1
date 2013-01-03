@@ -21,8 +21,7 @@ Grabber* kinectGrabber;
 unsigned int filesSaved = 0;
 bool saveCloud(false), noColour(false);
 
-void
-printUsage(const char* programName)
+void printUsage(const char* programName)
 {
     cout << "Usage: " << programName << " [options]"
          << endl
@@ -34,8 +33,7 @@ printUsage(const char* programName)
          << "\t-h         shows this help.\n";
 }
 
-void
-grabberCallback(const PointCloud<PointXYZRGBA>::ConstPtr& cloud)
+void grabberCallback(const PointCloud<PointXYZRGBA>::ConstPtr& cloud)
 {
     if (! viewer->wasStopped())
         viewer->showCloud(cloud);
@@ -56,8 +54,7 @@ grabberCallback(const PointCloud<PointXYZRGBA>::ConstPtr& cloud)
     }
 }
 
-void
-keyboardEventOccurred(const visualization::KeyboardEvent& event,
+void keyboardEventOccurred(const visualization::KeyboardEvent& event,
     void* nothing)
 {
     if (event.getKeySym() == "space" && event.keyDown())
@@ -74,8 +71,7 @@ createViewer()
     return(v);
 }
 
-int
-main(int argc, char** argv)
+int KinectPCL(int argc, char** argv)
 {
     if (console::find_argument(argc, argv, "-h") >= 0)
     {
@@ -152,25 +148,3 @@ main(int argc, char** argv)
     if (! justVisualize)
         kinectGrabber->stop();
 }
-
-CMakeLists.txt (you can use the original one, doesn't matter): 
-
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-
-project(kinect_PCL_viewer)
-
-find_package(PCL 1.2 REQUIRED)
-
-include_directories(${PCL_INCLUDE_DIRS})
-link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
-
-set(ROS_BUILD_TYPE Release)
-
-file(GLOB kinectpclviewer_SRC
-    "src/*.h"
-    "src/*.cpp"
-)
-add_executable(kinectPCLviewer ${kinectpclviewer_SRC})
-
-target_link_libraries (kinectPCLviewer ${PCL_LIBRARIES})

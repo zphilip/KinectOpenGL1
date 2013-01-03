@@ -1,5 +1,16 @@
+#ifndef _KinectPCL
+#define _KinectPCL
+
+#undef max
+#undef min
+#include <pcl/visualization/cloud_viewer.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/io/openni_grabber.h>
 #include <XnCppWrapper.h>
 #include <stdio.h>
+
+using namespace std;
+using namespace pcl;
 using namespace xn;
 /** 
 * use  1.create object 2.set output mode 3.initilization 4.update and processing 
@@ -112,3 +123,37 @@ private:
 	DepthmapPointCloud(const DepthmapPointCloud &rhs);	// don't define copy constructor
 	DepthmapPointCloud& operator=(const DepthmapPointCloud &rhs); // don't define assignment operator
 };
+class SimpleOpenNIViewer
+{
+public:
+    SimpleOpenNIViewer () : viewer ("PCL OpenNI Viewer") {}
+
+    void cloud_cb_ (const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &cloud)
+    {
+    if (!viewer.wasStopped())
+        viewer.showCloud (cloud);
+    }
+
+    void run ()
+    {
+    pcl::Grabber* interface = new pcl::OpenNIGrabber();
+
+    boost::function<void (const pcl::PointCloud<pcl::PointXYZ>::ConstPtr&)> f =
+        boost::bind (&SimpleOpenNIViewer::cloud_cb_, this, _1);
+
+    interface->registerCallback (f);
+
+    interface->start ();
+
+    while (!viewer.wasStopped())
+    {
+        boost::this_thread::sleep (boost::posix_time::seconds (1));
+    }
+
+    interface->stop ();
+    }
+
+    pcl::visualization::CloudViewer viewer;
+};
+
+#endif
