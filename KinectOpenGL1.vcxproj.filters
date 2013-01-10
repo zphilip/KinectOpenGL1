@@ -84,9 +84,6 @@
     <ClCompile Include="src\KinectHeadTracking\KVertex.cpp">
       <Filter>src\KinectHeadTracking</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\KinectDevice\OgreKinect.cpp">
       <Filter>src\KinectDevice</Filter>
     </ClCompile>
@@ -98,6 +95,9 @@
     </ClCompile>
     <ClCompile Include="src\KinectPointCloud\KinectPCL.cpp">
       <Filter>src\KinectPointCloud</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NICVSample4.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

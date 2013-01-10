@@ -93,7 +93,7 @@
     <ClCompile Include="src\KinectHeadTracking\KProgram.cpp" />
     <ClCompile Include="src\KinectHeadTracking\KVertex.cpp" />
     <ClCompile Include="src\KinectPointCloud\KinectPCL.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\NICVSample4.cpp" />
     <ClCompile Include="src\SceneDrawer.cpp" />
     <ClCompile Include="src\UserTracking\ClosestUserSelector.cpp" />
     <ClCompile Include="src\UserTracking\DefaultTrackingInitializer.cpp" />

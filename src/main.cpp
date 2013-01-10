@@ -26,7 +26,7 @@ int main(int argc, char* argv[]){
     {
         pKinectApp=XN_NEW(ClosestSampleManager,1); // choose the default.
 		new KProgram(pKinectApp);
-		//pthread_create(&threads, NULL,PCLView,NULL);
+		pthread_create(&threads, NULL,PCLView,NULL);
 		
     }
 
