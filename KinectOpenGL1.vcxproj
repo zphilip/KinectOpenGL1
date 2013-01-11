@@ -51,14 +51,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(OPEN_NI_INCLUDE);$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(XN_NITE_INSTALL_PATH)\Include;$(ogrebullet)\Collisions\include;$(ogrebullet)\Dynamics\include;$(BULLET_ROOT)\src;$(ProjectDir)/src/KinectDevice;$(ProjectDir)/src/KinectHeadTracking;$(ProjectDir)/src/UserTracking;$(ProjectDir)/src;C:\OpenCV2.2\include;.\;.\src\KinectPointCloud;$(PCL_ROOT)\include\pcl-1.6;$(PCL_ROOT)\3rdParty\Boost\include\;$(PCL_ROOT)\3rdParty\Eigen\include\;$(PCL_ROOT)\3rdParty\VTK\include\vtk-5.8;F:\My Lab\My Kinect\3rdPartyLibs\pthreads-w32-2-8-0-release\Pre-built.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPEN_NI_INCLUDE);$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(XN_NITE_INSTALL_PATH)\Include;$(ogrebullet)\Collisions\include;$(ogrebullet)\Dynamics\include;$(BULLET_ROOT)\src;$(ProjectDir)/src/KinectDevice;$(ProjectDir)/src/KinectHeadTracking;$(ProjectDir)/src/UserTracking;$(ProjectDir)/src;C:\OpenCV2.2\include;.\;.\src\KinectPointCloud;$(PCL_ROOT)\include\pcl-1.6;$(PCL_ROOT)\3rdParty\Boost\include\;$(PCL_ROOT)\3rdParty\Eigen\include\;$(PCL_ROOT)\3rdParty\VTK\include\vtk-5.8;F:\My Lab\My Kinect\3rdPartyLibs\pthreads-w32-2-8-0-release\Pre-built.2\include;$(OPENCV_ROOT)\build\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(OPEN_NI_LIB);$(OGRE_HOME)\lib\$(ConfigurationName);$(OGRE_HOME)\lib\$(ConfigurationName)\opt;$(OPEN_NI_LIB64);$(XN_NITE_INSTALL_PATH)\Lib;$(XN_NITE_INSTALL_PATH)\Lib64;$(ProjectDir)\gl;$(PCL_ROOT)\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\3rdParty\VTK\lib\vtk-5.8;F:\My Lab\My Kinect\3rdPartyLibs\pthreads-w32-2-8-0-release\Pre-built.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OPEN_NI_LIB);$(OGRE_HOME)\lib\$(ConfigurationName);$(OGRE_HOME)\lib\$(ConfigurationName)\opt;$(OPEN_NI_LIB64);$(XN_NITE_INSTALL_PATH)\Lib;$(XN_NITE_INSTALL_PATH)\Lib64;$(ProjectDir)\gl;$(PCL_ROOT)\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\3rdParty\VTK\lib\vtk-5.8;F:\My Lab\My Kinect\3rdPartyLibs\pthreads-w32-2-8-0-release\Pre-built.2\lib;$(OPENCV_ROOT)\build\x86\vc10\lib;$(PTHREADS_ROOT)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OgreMain_d.lib;OIS_d.lib;XnVNITE_1_5_2.lib;openNI.lib;pcl_io_debug.lib;pcl_visualization_debug.lib;pcl_common_debug.lib;pthreadVC2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -93,7 +93,7 @@
     <ClCompile Include="src\KinectHeadTracking\KProgram.cpp" />
     <ClCompile Include="src\KinectHeadTracking\KVertex.cpp" />
     <ClCompile Include="src\KinectPointCloud\KinectPCL.cpp" />
-    <ClCompile Include="src\NICVSample4.cpp" />
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SceneDrawer.cpp" />
     <ClCompile Include="src\UserTracking\ClosestUserSelector.cpp" />
     <ClCompile Include="src\UserTracking\DefaultTrackingInitializer.cpp" />

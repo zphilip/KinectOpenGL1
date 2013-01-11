@@ -96,7 +96,7 @@
     <ClCompile Include="src\KinectPointCloud\KinectPCL.cpp">
       <Filter>src\KinectPointCloud</Filter>
     </ClCompile>
-    <ClCompile Include="src\NICVSample4.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

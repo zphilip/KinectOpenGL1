@@ -1,6 +1,8 @@
 #include <opencv2/opencv.hpp>
+//#undef OPENCV_220 
+#define OPENCV_243
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(OPENCV_220)
 #pragma comment(lib, "opencv_imgproc220d.lib")
 #pragma comment(lib, "opencv_video220d.lib")
 #pragma comment(lib, "opencv_ts220.lib")
@@ -16,7 +18,27 @@
 #pragma comment(lib, "opencv_core220d.lib")
 #pragma comment(lib, "opencv_contrib220d.lib")
 #pragma comment(lib, "opencv_calib3d220d.lib")
-#else
+#endif
+
+#if defined(_DEBUG) && defined(OPENCV_243)
+#pragma comment(lib, "opencv_imgproc243d.lib")
+#pragma comment(lib, "opencv_video243d.lib")
+#pragma comment(lib, "opencv_ts243.lib")
+#pragma comment(lib, "opencv_objdetect243d.lib")
+#pragma comment(lib, "opencv_ml243d.lib")
+#pragma comment(lib, "opencv_legacy243d.lib")
+#pragma comment(lib, "opencv_imgproc243d.lib")
+#pragma comment(lib, "opencv_highgui243d.lib")
+//#pragma comment(lib, "opencv_haartraining_engine.lib")
+#pragma comment(lib, "opencv_gpu243d.lib")
+//#pragma comment(lib, "opencv_ffmpeg243d.lib")
+#pragma comment(lib, "opencv_features2d243d.lib")
+#pragma comment(lib, "opencv_core243d.lib")
+#pragma comment(lib, "opencv_contrib243d.lib")
+#pragma comment(lib, "opencv_calib3d243d.lib")
+#endif
+
+#if defined(_RELEASE) && defined(OPENCV_220)
 #pragma comment(lib, "opencv_imgproc220.lib")
 #pragma comment(lib, "opencv_video220.lib")
 #pragma comment(lib, "opencv_ts220.lib")
@@ -33,12 +55,13 @@
 #pragma comment(lib, "opencv_contrib220.lib")
 #pragma comment(lib, "opencv_calib3d220.lib")
 #endif
+
 using namespace cv;
 
 #include <XnCppWrapper.h>
 //#pragma comment(lib,"C:/Program files/OpenNI/Lib/openNI.lib")
 
-#define SAMPLE_XML_PATH "../../Data/SamplesConfig.xml"
+#define SAMPLE_XML_PATH "Data/SamplesConfig.xml"
 //---------------------------------------------------------------------------
 // Macros
 //---------------------------------------------------------------------------
