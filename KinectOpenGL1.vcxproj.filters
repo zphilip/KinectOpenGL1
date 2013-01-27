@@ -22,6 +22,30 @@
     <Filter Include="src\KinectPointCloud">
       <UniqueIdentifier>{b706248b-68f9-4785-ad90-16f4e73dacb9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\HandInteraction">
+      <UniqueIdentifier>{a5acdb9a-f236-45ca-a906-f7db5752f2c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ROSMsgs">
+      <UniqueIdentifier>{21090587-3879-4b8b-b20b-28b82d73b074}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ROSMsgs\body_msgs">
+      <UniqueIdentifier>{2c7ef4da-5689-4dda-a9da-a58a73b82384}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ROSMsgs\sensor_msgs">
+      <UniqueIdentifier>{0b2f2c5e-84a5-4865-afaa-4f9111a0a0f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ROSMsgs\std_msgs">
+      <UniqueIdentifier>{4701fbe4-920b-442e-ad2c-297ddc085f9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ROSMsgs\mapping_msgs">
+      <UniqueIdentifier>{a7d58c0c-df0c-45ac-a9aa-573f496d93f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ROSMsgs\geometry_msgs">
+      <UniqueIdentifier>{abfd6b94-5354-46f2-b94a-e32dbf858ad4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ROSMsgs\geometric_shapes_msgs">
+      <UniqueIdentifier>{47e16919-acb9-4028-bbbc-f1e5797b462b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\KinectDevice\KinectDevice.cpp">
@@ -98,6 +122,15 @@
     </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HandInteraction\src\analyze_hands.cpp">
+      <Filter>src\HandInteraction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HandInteraction\src\detect_hands.cpp">
+      <Filter>src\HandInteraction</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HandInteraction\src\detect_hands_wskel.cpp">
+      <Filter>src\HandInteraction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +349,270 @@
     </ClInclude>
     <ClInclude Include="src\KinectPointCloud\glPointCould.h">
       <Filter>src\KinectPointCloud</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\body_msgs\Hand.h">
+      <Filter>src\ROSMsgs\body_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\body_msgs\Hands.h">
+      <Filter>src\ROSMsgs\body_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\body_msgs\Skeleton.h">
+      <Filter>src\ROSMsgs\body_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\body_msgs\SkeletonJoint.h">
+      <Filter>src\ROSMsgs\body_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\body_msgs\Skeletons.h">
+      <Filter>src\ROSMsgs\body_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\mapping_msgs\AttachedCollisionObject.h">
+      <Filter>src\ROSMsgs\mapping_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\mapping_msgs\CollisionMap.h">
+      <Filter>src\ROSMsgs\mapping_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\mapping_msgs\CollisionObject.h">
+      <Filter>src\ROSMsgs\mapping_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\mapping_msgs\CollisionObjectOperation.h">
+      <Filter>src\ROSMsgs\mapping_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\mapping_msgs\OrientedBoundingBox.h">
+      <Filter>src\ROSMsgs\mapping_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\mapping_msgs\PolygonalMap.h">
+      <Filter>src\ROSMsgs\mapping_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\Point.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\Point32.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\PointStamped.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\Polygon.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\PolygonStamped.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\Pose.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\Pose2D.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\PoseArray.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\PoseStamped.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\PoseWithCovariance.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\PoseWithCovarianceStamped.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\Quaternion.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\QuaternionStamped.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\Transform.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\TransformStamped.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\Twist.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\TwistStamped.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\TwistWithCovariance.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\TwistWithCovarianceStamped.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\Vector3.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\Vector3Stamped.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\Wrench.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometry_msgs\WrenchStamped.h">
+      <Filter>src\ROSMsgs\geometry_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\geometric_shapes_msgs\Shape.h">
+      <Filter>src\ROSMsgs\geometric_shapes_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Bool.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Byte.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\ByteMultiArray.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Char.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\ColorRGBA.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Duration.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Empty.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Float32.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Float32MultiArray.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Float64.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Float64MultiArray.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Header.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Int8.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Int8MultiArray.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Int16.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Int16MultiArray.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Int32.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Int32MultiArray.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Int64.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Int64MultiArray.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\MultiArrayDimension.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\MultiArrayLayout.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\String.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\Time.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\UInt8.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\UInt8MultiArray.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\UInt16.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\UInt16MultiArray.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\UInt32.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\UInt32MultiArray.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\UInt64.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\std_msgs\UInt64MultiArray.h">
+      <Filter>src\ROSMsgs\std_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\CameraInfo.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\ChannelFloat32.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\CompressedImage.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\Image.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\Imu.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\JointState.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\Joy.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\JoyFeedback.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\JoyFeedbackArray.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\LaserScan.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\NavSatFix.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\NavSatStatus.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\PointCloud.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\PointCloud2.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\PointField.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\Range.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\RegionOfInterest.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\SetCameraInfo.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\SetCameraInfoRequest.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\SetCameraInfoResponse.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ROSMsgs\sensor_msgs\TimeReference.h">
+      <Filter>src\ROSMsgs\sensor_msgs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

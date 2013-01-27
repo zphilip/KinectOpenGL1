@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/mit-ros-pkg/!svn/ver/756/trunk/pcl_tools/include/pcl_tools
+END
+clusterevaluation.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/mit-ros-pkg/!svn/ver/600/trunk/pcl_tools/include/pcl_tools/clusterevaluation.hpp
+END
+segfast.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/mit-ros-pkg/!svn/ver/756/trunk/pcl_tools/include/pcl_tools/segfast.hpp
+END
+pcl_utils.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/mit-ros-pkg/!svn/ver/756/trunk/pcl_tools/include/pcl_tools/pcl_utils.h
+END
