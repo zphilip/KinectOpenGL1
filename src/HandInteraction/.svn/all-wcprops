@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/mit-ros-pkg/!svn/ver/899/trunk/kinect_utils/hand_interaction
+END
+manifest.xml
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/mit-ros-pkg/!svn/ver/756/trunk/kinect_utils/hand_interaction/manifest.xml
+END
+mainpage.dox
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/mit-ros-pkg/!svn/ver/606/trunk/kinect_utils/hand_interaction/mainpage.dox
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/mit-ros-pkg/!svn/ver/591/trunk/kinect_utils/hand_interaction/CMakeLists.txt
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/mit-ros-pkg/!svn/ver/588/trunk/kinect_utils/hand_interaction/Makefile
+END

@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/mit-ros-pkg/!svn/ver/657/trunk/kinect_utils/hand_interaction/config
+END
+fingerdetection.vcg
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/mit-ros-pkg/!svn/ver/591/trunk/kinect_utils/hand_interaction/config/fingerdetection.vcg
+END
+handdetection.vcg
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/mit-ros-pkg/!svn/ver/657/trunk/kinect_utils/hand_interaction/config/handdetection.vcg
+END

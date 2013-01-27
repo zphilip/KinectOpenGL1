@@ -1,6 +1,6 @@
 #include <opencv2/opencv.hpp>
 //#undef OPENCV_220 
-#define OPENCV_243
+#define OPENCV_220
 
 #if defined(_DEBUG) && defined(OPENCV_220)
 #pragma comment(lib, "opencv_imgproc220d.lib")
@@ -61,7 +61,7 @@ using namespace cv;
 #include <XnCppWrapper.h>
 //#pragma comment(lib,"C:/Program files/OpenNI/Lib/openNI.lib")
 
-#define SAMPLE_XML_PATH "Data/SamplesConfig.xml"
+#define SAMPLE_XML_PATH "../../Data/SamplesConfig.xml"
 //---------------------------------------------------------------------------
 // Macros
 //---------------------------------------------------------------------------
