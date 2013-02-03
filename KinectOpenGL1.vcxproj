@@ -51,7 +51,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(OPEN_NI_INCLUDE);$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(XN_NITE_INSTALL_PATH)\Include;$(ogrebullet)\Collisions\include;$(ogrebullet)\Dynamics\include;$(BULLET_ROOT)\src;$(ProjectDir)/src/KinectDevice;$(ProjectDir)/src/KinectHeadTracking;$(ProjectDir)/src/UserTracking;$(ProjectDir)/src;C:\OpenCV2.2\include;.\;.\src\KinectPointCloud;$(PCL_ROOT)\include\pcl-1.6;$(PCL_ROOT)\3rdParty\Boost\include\;$(PCL_ROOT)\3rdParty\Eigen\include\;$(PCL_ROOT)\3rdParty\VTK\include\vtk-5.8;F:\My Lab\My Kinect\3rdPartyLibs\pthreads-w32-2-8-0-release\Pre-built.2\include;$(OPENCV_ROOT)\build\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPEN_NI_INCLUDE);$(OGRE_HOME)\include;$(OGRE_HOME)\include\OGRE;$(XN_NITE_INSTALL_PATH)\Include;$(ogrebullet)\Collisions\include;$(ogrebullet)\Dynamics\include;$(ProjectDir)/src/KinectDevice;$(ProjectDir)/src/KinectHeadTracking;$(ProjectDir)/src/UserTracking;$(ProjectDir)/src;C:\OpenCV2.2\include;.\;.\src\KinectPointCloud;.\src\ros_include;.\src\ros_include\rosdeps;.\src\ROSMsgs;.\src\tflib;.\src\geometry;$(PCL_ROOT)\include\pcl-1.6;$(PCL_ROOT)\3rdParty\Boost\include\;$(PCL_ROOT)\3rdParty\Eigen\include\;$(PCL_ROOT)\3rdParty\VTK\include\vtk-5.8;F:\My Lab\My Kinect\3rdPartyLibs\pthreads-w32-2-8-0-release\Pre-built.2\include;$(OPENCV_ROOT)\build\include\;$(The3rdPartyLibs)\ros-win32.servicerobotics.eu\trunk\external\bullet\2_76\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
@@ -81,9 +81,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\HandInteraction\src\analyze_hands.cpp" />
-    <ClCompile Include="src\HandInteraction\src\detect_hands.cpp" />
-    <ClCompile Include="src\HandInteraction\src\detect_hands_wskel.cpp" />
+    <ClCompile Include="src\geometry\tf\cache.cpp" />
+    <ClCompile Include="src\geometry\tf\tf.cpp" />
+    <ClCompile Include="src\geometry\tf\transform_broadcaster.cpp" />
+    <ClCompile Include="src\geometry\tf\transform_listener.cpp" />
     <ClCompile Include="src\KinectDevice\KinectDevice.cpp" />
     <ClCompile Include="src\KinectDevice\KinectDeviceManager.cpp" />
     <ClCompile Include="src\KinectDevice\OgreKinect.cpp" />
@@ -98,6 +99,10 @@
     <ClCompile Include="src\KinectPointCloud\KinectPCL.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SceneDrawer.cpp" />
+    <ClCompile Include="src\tflib\cache.cpp" />
+    <ClCompile Include="src\tflib\tf.cpp" />
+    <ClCompile Include="src\tflib\transform_broadcaster.cpp" />
+    <ClCompile Include="src\tflib\transform_listener.cpp" />
     <ClCompile Include="src\UserTracking\ClosestUserSelector.cpp" />
     <ClCompile Include="src\UserTracking\DefaultTrackingInitializer.cpp" />
     <ClCompile Include="src\UserTracking\ExitPoseDetector.cpp" />
@@ -214,6 +219,16 @@
     <ClInclude Include="src\ROSMsgs\std_msgs\UInt8.h" />
     <ClInclude Include="src\ROSMsgs\std_msgs\UInt8MultiArray.h" />
     <ClInclude Include="src\SceneDrawer.h" />
+    <ClInclude Include="src\tflib\defines.h" />
+    <ClInclude Include="src\tflib\tf.h" />
+    <ClInclude Include="src\tflib\tf_msgs\FrameGraph.h" />
+    <ClInclude Include="src\tflib\tf_msgs\FrameGraphRequest.h" />
+    <ClInclude Include="src\tflib\tf_msgs\FrameGraphResponse.h" />
+    <ClInclude Include="src\tflib\tf_msgs\tfMessage.h" />
+    <ClInclude Include="src\tflib\time_cache.h" />
+    <ClInclude Include="src\tflib\transform_broadcaster.h" />
+    <ClInclude Include="src\tflib\transform_datatypes.h" />
+    <ClInclude Include="src\tflib\transform_listener.h" />
     <ClInclude Include="src\UserTracking\ClosestUserSelector.h" />
     <ClInclude Include="src\UserTracking\DefaultTrackingInitializer.h" />
     <ClInclude Include="src\UserTracking\Documentation.h" />

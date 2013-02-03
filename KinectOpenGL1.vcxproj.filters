@@ -46,6 +46,21 @@
     <Filter Include="src\ROSMsgs\geometric_shapes_msgs">
       <UniqueIdentifier>{47e16919-acb9-4028-bbbc-f1e5797b462b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\tflib">
+      <UniqueIdentifier>{2a41c799-7e28-463a-8834-05e80445d6dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tflib\tf_msgs">
+      <UniqueIdentifier>{ab11d143-c72a-43c7-9d13-a54a3c59fba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\geometry">
+      <UniqueIdentifier>{b749bc37-484e-4e55-9046-56dc6221cc5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\geometry\tf">
+      <UniqueIdentifier>{a074f19e-2037-4166-bf2d-cdd540184a6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\geometry\angles">
+      <UniqueIdentifier>{8d73fe73-a8fc-40ea-bfa3-15a8de0da287}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\KinectDevice\KinectDevice.cpp">
@@ -123,14 +138,29 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\HandInteraction\src\analyze_hands.cpp">
-      <Filter>src\HandInteraction</Filter>
+    <ClCompile Include="src\tflib\cache.cpp">
+      <Filter>src\tflib</Filter>
     </ClCompile>
-    <ClCompile Include="src\HandInteraction\src\detect_hands.cpp">
-      <Filter>src\HandInteraction</Filter>
+    <ClCompile Include="src\tflib\tf.cpp">
+      <Filter>src\tflib</Filter>
     </ClCompile>
-    <ClCompile Include="src\HandInteraction\src\detect_hands_wskel.cpp">
-      <Filter>src\HandInteraction</Filter>
+    <ClCompile Include="src\tflib\transform_broadcaster.cpp">
+      <Filter>src\tflib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tflib\transform_listener.cpp">
+      <Filter>src\tflib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\tf\cache.cpp">
+      <Filter>src\geometry\tf</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\tf\tf.cpp">
+      <Filter>src\geometry\tf</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\tf\transform_broadcaster.cpp">
+      <Filter>src\geometry\tf</Filter>
+    </ClCompile>
+    <ClCompile Include="src\geometry\tf\transform_listener.cpp">
+      <Filter>src\geometry\tf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -613,6 +643,36 @@
     </ClInclude>
     <ClInclude Include="src\ROSMsgs\sensor_msgs\TimeReference.h">
       <Filter>src\ROSMsgs\sensor_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tflib\defines.h">
+      <Filter>src\tflib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tflib\tf.h">
+      <Filter>src\tflib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tflib\time_cache.h">
+      <Filter>src\tflib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tflib\transform_broadcaster.h">
+      <Filter>src\tflib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tflib\transform_datatypes.h">
+      <Filter>src\tflib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tflib\transform_listener.h">
+      <Filter>src\tflib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tflib\tf_msgs\FrameGraph.h">
+      <Filter>src\tflib\tf_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tflib\tf_msgs\FrameGraphRequest.h">
+      <Filter>src\tflib\tf_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tflib\tf_msgs\FrameGraphResponse.h">
+      <Filter>src\tflib\tf_msgs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tflib\tf_msgs\tfMessage.h">
+      <Filter>src\tflib\tf_msgs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
